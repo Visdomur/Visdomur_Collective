@@ -1,1919 +1,1004 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title id="page-title">My Profile</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Andale+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<style>
-  :root {
-    --color-text: #0f0f0f;
-    --color-scrollbox: #fbfbfb;
-    --color-accent: #d94a79;
-    --color-accent-rgb: 217, 74, 121;
-    --color-bg: #ffd9e5;
-    --color-img-border: #4c4c4c;
-    --font-body: 'Andale Mono', monospace;
-    --font-display: Impact, sans-serif;
-  }
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>System Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Inconsolata:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    /* ══════════════════════════════════════════
+       TOKENS
+    ══════════════════════════════════════════ */
+    :root {
+      --bg:        #f2ede6;
+      --bg2:       #e8e1d6;
+      --bg3:       #ddd5c8;
+      --card:      #faf8f4;
+      --accent:    #7a8c6e;
+      --accent2:   #a3b48f;
+      --accent3:   #4e5e44;
+      --warm:      #c4956a;
+      --warm2:     #deb896;
+      --text:      #2b2318;
+      --muted:     #7a6e61;
+      --border:    rgba(122,140,110,0.22);
+      --shadow:    4px 4px 0px rgba(78,94,68,0.28);
+      --radius:    16px;
+      --font-head: 'Lora', Georgia, serif;
+      --font-body: 'Inconsolata', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse at 15% 20%, rgba(163,180,143,0.18) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 75%, rgba(196,149,106,0.13) 0%, transparent 50%);
+      font-family: var(--font-body);
+      color: var(--text);
+      min-height: 100vh;
+    }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* ══════════════════════════════════════════
+       BANNER
+    ══════════════════════════════════════════ */
+    .banner {
+      width: 100%; height: 200px;
+      background: linear-gradient(135deg,#c8d4b8 0%,#a3b48f 45%,#7a8c6e 100%);
+      position: relative; overflow: hidden;
+    }
+    .banner::before {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 50%,rgba(255,255,255,.08) 0%,transparent 40%),
+        radial-gradient(circle at 80% 30%,rgba(196,149,106,.15) 0%,transparent 35%);
+    }
+    #bannerImg { width: 100%; height: 100%; background-size: cover; background-position: center; }
 
-  body {
-    font-family: var(--font-body);
-    background: #1a1a1a;
-    min-height: 100vh;
-  }
+    /* ══════════════════════════════════════════
+       PAGE LAYOUT
+    ══════════════════════════════════════════ */
+    .page-wrap { max-width: 1180px; margin: 0 auto; padding: 0 18px 80px; }
+    .main-grid {
+      display: grid;
+      grid-template-columns: 240px 1fr 200px;
+      gap: 18px;
+      align-items: start;
+    }
 
-  /* ===== VIEWER MODE ===== */
-  #viewer-mode { display: block; }
-  #creator-mode { display: none; }
+    /* ══════════════════════════════════════════
+       SHARED
+    ══════════════════════════════════════════ */
+    .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); }
+    .divider { border: none; border-top: 1px dashed var(--border); margin: 22px 0; }
+    .prose { font-size: .82rem; line-height: 1.85; color: var(--text); margin-bottom: 14px; }
 
-  /* Site wrapper shown in viewer */
-  .site-wrapper {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
+    /* ══════════════════════════════════════════
+       LEFT SIDEBAR
+    ══════════════════════════════════════════ */
+    .sidebar-left { position: sticky; top: 18px; }
+    .avatar-wrap { display: flex; justify-content: center; margin-top: -65px; margin-bottom: 14px; }
+    #avatarEl {
+      width: 130px; height: 130px; border-radius: 50%;
+      border: 4px solid var(--card);
+      box-shadow: 0 0 0 3px var(--accent), var(--shadow);
+      background: var(--bg2) center/cover no-repeat;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.8rem; color: var(--accent);
+      overflow: hidden; flex-shrink: 0;
+    }
+    #avatarEl img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .left-inner { padding: 18px; }
+    .username { font-family: var(--font-head); font-size: 1.75rem; text-align: center; line-height: 1.15; }
+    .username em { font-style: italic; color: var(--accent3); }
+    .tagline { text-align: center; font-size: .68rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin: 5px 0 18px; }
+    .slabel { font-size: .6rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); margin: 14px 0 6px; display: flex; align-items: center; gap: 6px; }
+    .slabel::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .nav-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .nav-list a { display: flex; align-items: center; justify-content: space-between; gap: 8px; text-decoration: none; color: var(--text); font-size: .74rem; letter-spacing: .5px; padding: 8px 12px; border-radius: 10px; border: 1px solid transparent; transition: background .15s, border-color .15s, color .15s; }
+    .nav-list a:hover { background: var(--bg2); border-color: var(--border); color: var(--accent3); }
+    .nav-list .nav-icon { color: var(--accent); width: 16px; text-align: center; }
+    .nav-list .nav-arrow { color: var(--muted); font-size: .55rem; }
+    .social-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .social-list a { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text); font-size: .72rem; padding: 5px 10px; border-radius: 8px; transition: background .15s, color .15s; }
+    .social-list a:hover { background: var(--bg2); color: var(--accent3); }
+    .social-list a i { color: var(--warm); width: 15px; text-align: center; }
 
-  /* Banner */
-  .profile-banner {
-    width: 100%;
-    height: 220px;
-    background: var(--color-bg) url('') center/cover no-repeat;
-    border-radius: 0 0 20px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .profile-banner.no-image::after {
-    content: '[ profile banner ]';
-    color: rgba(255,255,255,0.4);
-    font-family: var(--font-body);
-    font-size: 14px;
-    letter-spacing: 3px;
-  }
+    /* ══════════════════════════════════════════
+       CENTER SCROLL BOX
+    ══════════════════════════════════════════ */
+    .scroll-card {
+      background: var(--card); border-radius: var(--radius);
+      box-shadow: var(--shadow); border: 1px solid var(--border);
+      height: 680px; overflow-y: auto;
+      scrollbar-width: thin; scrollbar-color: var(--accent2) transparent;
+      display: flex; flex-direction: column;
+    }
+    .scroll-card::-webkit-scrollbar { width: 5px; }
+    .scroll-card::-webkit-scrollbar-thumb { background: var(--accent2); border-radius: 10px; }
 
-  /* Nav bar */
-  .site-nav {
-    background: #111;
-    padding: 10px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .site-nav .nav-title {
-    color: #fff;
-    font-family: var(--font-display);
-    font-size: 22px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-  }
-  .site-nav .nav-links {
-    display: flex;
-    gap: 12px;
-  }
-  .nav-btn {
-    padding: 6px 18px;
-    border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.2);
-    background: transparent;
-    color: #fff;
-    font-family: var(--font-body);
-    font-size: 13px;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background 0.2s, border-color 0.2s;
-  }
-  .nav-btn:hover, .nav-btn.active {
-    background: rgba(255,255,255,0.1);
-    border-color: rgba(255,255,255,0.5);
-  }
-  .nav-btn.creator-trigger {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-  }
-  .nav-btn.creator-trigger:hover {
-    background: rgba(var(--color-accent-rgb), 0.15);
-  }
+    /* music bar */
+    .music-bar {
+      background: var(--text); color: var(--card);
+      font-size: .67rem; letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 8px 16px; border-radius: var(--radius) var(--radius) 0 0;
+      display: flex; align-items: center; gap: 10px; overflow: hidden;
+      flex-shrink: 0; position: sticky; top: 0; z-index: 10;
+    }
+    .music-bar i { color: var(--accent2); flex-shrink: 0; }
+    .ticker-wrap { overflow: hidden; flex: 1; }
+    .ticker-wrap span { display: inline-block; animation: ticker 20s linear infinite; white-space: nowrap; }
+    @keyframes ticker { 0%{transform:translateX(60%)} 100%{transform:translateX(-100%)} }
+    .yt-embed { position: absolute; opacity:.0001; width:1px; height:1px; pointer-events:none; }
 
-  /* Main content area */
-  .main-content {
-    flex: 1;
-    padding: 20px 16px 40px;
-  }
+    .scroll-inner { padding: 22px 26px; flex: 1; }
 
-  /* ===== PROFILE CARD ===== */
-  .profile-outer {
-    background: var(--color-bg) url('') center/cover;
-    border-radius: 20px;
-    padding: 20px 0 0;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
+    /* section header bar */
+    .sec-head {
+      display: inline-flex; align-items: center; gap: 9px;
+      font-family: var(--font-head); font-size: 1.35rem; font-style: italic;
+      color: var(--card); background: var(--accent3);
+      padding: 4px 18px 4px 14px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin-left: -26px; margin-bottom: 16px;
+      box-shadow: 3px 3px 0 var(--accent);
+      transition: opacity .2s;
+    }
+    .sec-head i { font-size: .9rem; }
+    .sec-head.hidden-head { opacity: 0; pointer-events: none; height: 0; margin: 0; overflow: hidden; padding: 0; box-shadow: none; }
 
-  .content-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0;
-    padding: 0 16px;
-  }
+    /* ── TIMEZONE ── */
+    .tz-widget {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--bg2); border-radius: 10px;
+      padding: 12px 20px; margin-bottom: 18px;
+      border: 1px solid var(--border); width: 100%;
+    }
+    .tz-widget i { color: var(--accent3); font-size: 1.2rem; flex-shrink: 0; }
+    .tz-right { flex: 1; }
+    .tz-label { font-size: .6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); margin-bottom: 2px; }
+    #tzName { font-size: .72rem; color: var(--text); margin-bottom: 3px; }
+    #tzClock { font-family: var(--font-head); font-size: 1.8rem; color: var(--accent3); letter-spacing: 3px; line-height: 1; }
 
-  /* Left column */
-  .left-col {
-    width: 300px;
-    flex-shrink: 0;
-    padding: 0 8px 12px;
-    margin: 0 auto 12px;
-    position: relative;
-  }
-  .left-inner {
-    height: 500px;
-    background: var(--color-scrollbox);
-    border-radius: 20px;
-    box-shadow: 4px 4px 0px rgba(var(--color-accent-rgb), 0.5);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: visible;
-  }
-  .left-icon-decor {
-    position: absolute;
-    top: -20px;
-    left: -25px;
-    font-size: 60px;
-    color: var(--color-text);
-    text-shadow: 3px 3px 0 var(--color-accent);
-    z-index: 5;
-  }
-  .left-username {
-    color: var(--color-scrollbox);
-    letter-spacing: 7px;
-    font-size: 40px;
-    text-shadow: -1px -1px 0 var(--color-accent), 3px -1px 0 var(--color-accent), -1px 1px 0 var(--color-text), 3px 3px 0 var(--color-text);
-    font-family: var(--font-display);
-    font-weight: bold;
-    text-transform: uppercase;
-    position: absolute;
-    top: -20px;
-    left: 0;
-    z-index: 10;
-    line-height: 1;
-  }
-  .left-pagedoll {
-    position: absolute;
-    right: -10px;
-    top: -30px;
-    z-index: 11;
-    filter: drop-shadow(4px 2px var(--color-text));
-  }
-  .left-pagedoll img { width: 130px; display: block; }
-  .focal-image {
-    background: url('') center/cover no-repeat var(--color-accent);
-    border-radius: 20px 20px 0 200px;
-    flex: 1;
-    opacity: 0.8;
-  }
-  .focal-image.placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    color: rgba(255,255,255,0.6);
-    letter-spacing: 2px;
-  }
-  .left-info {
-    padding: 8px 10px;
-    text-transform: uppercase;
-    font-weight: bold;
-    text-align: right;
-    color: var(--color-text);
-    font-size: 13px;
-  }
-  .icon-links {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: 4px;
-    margin-top: 4px;
-  }
-  .icon-links a {
-    color: var(--color-text);
-    text-decoration: none;
-    margin: 0 4px;
-    font-size: 15px;
-    transition: color 0.2s;
-  }
-  .icon-links a:hover { color: var(--color-accent); }
+    /* ── SLIDESHOW ── */
+    .slideshow {
+      position: relative; border-radius: var(--radius);
+      overflow: hidden; height: 220px;
+      background: var(--bg3); margin-bottom: 8px;
+      border: 1px solid var(--border);
+    }
+    .slide {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      opacity: 0; transition: opacity 1.2s ease;
+      display: flex; align-items: flex-end;
+    }
+    .slide.active { opacity: 1; }
+    .slide-caption { background: linear-gradient(transparent,rgba(43,35,24,.65)); color: #fff; font-size: .65rem; letter-spacing: 2px; text-transform: uppercase; padding: 20px 14px 10px; width: 100%; }
+    .slide-ph { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: var(--muted); font-size: .75rem; letter-spacing: 1px; }
+    .slide-ph i { font-size: 2rem; color: var(--bg3); }
+    .slide-dots { display: flex; gap: 6px; justify-content: center; padding: 8px 0 4px; }
+    .dot { width:8px; height:8px; border-radius:50%; background:var(--bg3); border:1px solid var(--border); cursor:pointer; transition:background .2s; }
+    .dot.active { background: var(--accent); }
 
-  /* Right column */
-  .right-col {
-    flex: 1;
-    min-width: 0;
-    padding: 0 8px 12px;
-  }
-  .right-inner {
-    height: 500px;
-    background: var(--color-scrollbox);
-    border-radius: 20px;
-    box-shadow: 4px 4px 0px rgba(var(--color-accent-rgb), 0.5);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    position: relative;
-  }
-  .scroll-icon {
-    position: absolute;
-    bottom: -5px;
-    right: -10px;
-    font-size: 30px;
-    z-index: 20;
-    color: var(--color-text);
-    text-shadow: 2px 2px var(--color-accent);
-    pointer-events: none;
-  }
+    /* ── FRONTER PROFILE GRID ── */
+    .fronter-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+    .fronter-card {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      background: var(--bg2); border-radius: 12px;
+      padding: 10px 10px 8px;
+      border: 1px solid var(--border);
+      width: 90px;
+      text-decoration: none; color: var(--text);
+      transition: box-shadow .2s, transform .2s;
+      position: relative;
+    }
+    .fronter-card:hover { transform: translateY(-2px); box-shadow: 3px 3px 0 rgba(78,94,68,.25); }
+    .fronter-thumb {
+      width: 58px; height: 58px; border-radius: 50%;
+      background: var(--bg3); background-size: cover; background-position: center;
+      border: 2px solid var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; color: var(--muted); flex-shrink: 0;
+      overflow: hidden;
+    }
+    .fronter-thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .fronter-name { font-size: .65rem; text-transform: uppercase; letter-spacing: 1px; text-align: center; color: var(--text); line-height: 1.3; }
+    .fronter-add {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 4px; background: transparent;
+      border: 1px dashed var(--border);
+      cursor: pointer; font-family: var(--font-body);
+      color: var(--muted); font-size: .6rem; letter-spacing: 1px;
+    }
+    .fronter-add i { font-size: 1.2rem; color: var(--accent2); }
+    .fronter-add:hover { background: var(--bg2); color: var(--accent3); }
 
-  /* Music bar */
-  .music-bar {
-    background: var(--color-text);
-    color: var(--color-scrollbox);
-    border-radius: 20px 20px 0 0;
-    padding: 6px 16px;
-    font-size: 13px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-transform: uppercase;
-    position: relative;
-    cursor: pointer;
-  }
-  .music-bar iframe {
-    height: 300px;
-    width: 2.5rem;
-    opacity: 0.0001;
-    position: absolute;
-    left: 0;
-    top: -130px;
-    border: none;
-  }
+    /* ── DISCLAIMER ── */
+    .disclaimer-box { background: var(--bg2); border-radius: 10px; padding: 14px 18px; font-size: .8rem; line-height: 1.8; border-left: 3px solid var(--warm); }
+    .disclaimer-box ul { padding-left: 18px; }
+    .disclaimer-box li { margin-bottom: 4px; }
 
-  /* Scrollbox */
-  .scrollbox {
-    overflow-y: auto;
-    flex: 1;
-    scrollbar-width: none;
-  }
-  .scrollbox::-webkit-scrollbar { display: none; }
+    /* ── CUSTOM SECTIONS ── */
+    .custom-section { margin-bottom: 0; }
+    .custom-section .sec-block-inner { margin-bottom: 0; }
+    .custom-link-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .custom-link-list a { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text); font-size: .78rem; padding: 7px 12px; border-radius: 8px; background: var(--bg2); border: 1px solid var(--border); transition: background .15s; }
+    .custom-link-list a:hover { background: var(--bg3); color: var(--accent3); }
+    .custom-link-list a i { color: var(--accent); }
+    .custom-img-block { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); margin-bottom: 8px; }
+    .custom-img-block img { width: 100%; display: block; }
+    .custom-img-caption { font-size: .7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); padding: 6px 12px; background: var(--bg2); }
 
-  /* Section header */
-  .section-header {
-    display: inline-block;
-    text-transform: uppercase;
-    padding: 4px 10px;
-    margin: 12px 0;
-    letter-spacing: 7px;
-    font-size: 30px;
-    font-family: var(--font-display);
-    background: var(--color-accent);
-    color: var(--color-scrollbox);
-    box-shadow: 3px 3px 0 var(--color-text), 0 4px 0 var(--color-text);
-    border-radius: 0 20px 20px 0;
-  }
+    /* ══════════════════════════════════════════
+       RIGHT SIDEBAR — character cards
+    ══════════════════════════════════════════ */
+    .sidebar-right { position: sticky; top: 18px; display: flex; flex-direction: column; gap: 14px; }
+    .char-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: visible; position: relative; transition: box-shadow .2s; }
+    .char-thumb { width: 100%; aspect-ratio: 4/3; background: var(--bg2); background-size: cover; background-position: center; border-radius: var(--radius) var(--radius) 0 0; position: relative; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 2.2rem; overflow: hidden; }
+    .char-thumb-overlay { position: absolute; inset: 0; background: linear-gradient(transparent 40%,rgba(43,35,24,.6)); }
+    .char-thumb-name { position: absolute; bottom: 0; left: 0; right: 0; color: #fff; font-size: .62rem; text-transform: uppercase; letter-spacing: 2px; padding: 16px 10px 7px; }
+    .char-toggle { width: 100%; background: var(--bg2); border: none; border-top: 1px solid var(--border); border-radius: 0 0 var(--radius) var(--radius); padding: 6px 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-family: var(--font-body); font-size: .65rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); transition: background .15s, color .15s; }
+    .char-toggle:hover { background: var(--bg3); color: var(--accent3); }
+    .char-toggle .toggle-icon { transition: transform .3s; }
+    .char-toggle.open .toggle-icon { transform: rotate(180deg); }
 
-  /* Notices */
-  .notices-section {
-    padding: 0 12px;
-    word-break: normal;
-    overflow-wrap: normal;
-  }
-  .notices-section ul {
-    list-style: square;
-    padding-left: 20px;
-    padding-right: 12px;
-  }
-  .notices-section ul li { margin-bottom: 4px; }
-  .notices-section a { color: var(--color-accent); }
-  .pagedoll-float-right {
-    float: right;
-    padding: 0 4px;
-    margin-top: -20px;
-  }
-  .pagedoll-float-right img, .pagedoll-float-left img { max-height: 200px; }
-  .pagedoll-float-left { float: left; padding: 0 4px; }
+    /* floating panel */
+    .char-panel {
+      position: absolute; top: 0; right: calc(100% + 12px);
+      width: 400px;
+      background: var(--card);
+      border: 2px solid var(--accent);
+      border-radius: var(--radius);
+      box-shadow: -6px 6px 0 rgba(78,94,68,.3), 0 0 0 1px var(--border);
+      z-index: 200;
+      opacity: 0; pointer-events: none;
+      transform: translateX(10px);
+      transition: opacity .25s ease, transform .25s ease;
+      overflow: hidden;
+    }
+    .char-panel.open { opacity: 1; pointer-events: auto; transform: translateX(0); }
+    .cp-header { background: var(--accent3); color: var(--card); font-family: var(--font-head); font-style: italic; font-size: 1.1rem; padding: 10px 18px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--accent); }
+    .cp-header-left { display: flex; align-items: center; gap: 8px; }
+    .cp-close { background: none; border: none; cursor: pointer; color: var(--card); opacity: .7; font-size: .85rem; transition: opacity .15s; }
+    .cp-close:hover { opacity: 1; }
+    .cp-img { width: 100%; height: 140px; background: var(--bg3); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 2.5rem; border-bottom: 1px solid var(--border); }
+    .cp-body { padding: 16px 18px 18px; }
+    .cp-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: flex-start; }
+    .cp-label { font-size: .6rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); width: 64px; flex-shrink: 0; padding-top: 2px; }
+    .cp-val { font-size: .78rem; line-height: 1.6; color: var(--text); }
+    .cp-traits { display: flex; flex-wrap: wrap; gap: 5px; }
+    .cp-trait { background: var(--bg2); border-radius: 4px; padding: 3px 9px; font-size: .62rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+    .cp-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: .68rem; letter-spacing: 1px; text-transform: uppercase; color: var(--accent3); text-decoration: none; border-bottom: 1px dashed var(--accent2); padding-bottom: 1px; }
+    .cp-link:hover { color: var(--warm); border-color: var(--warm); }
 
-  /* Status + Carousel row */
-  .status-carousel-row {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 12px 0 0;
-    clear: both;
-  }
-  .art-status { padding: 0 12px; }
-  .status-line {
-    display: flex;
-    align-items: center;
-    margin-bottom: 4px;
-    font-size: 13px;
-  }
-  .status-label {
-    background: var(--color-text);
-    color: var(--color-scrollbox);
-    font-weight: bold;
-    text-transform: uppercase;
-    padding: 1px 8px;
-    font-size: 12px;
-    white-space: nowrap;
-  }
-  .status-value {
-    padding: 0 8px;
-    font-size: 12px;
-  }
-  .status-value a { color: var(--color-text); }
+    /* ══════════════════════════════════════════
+       CREATE MODE
+    ══════════════════════════════════════════ */
+    #createTrigger {
+      position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 5px 18px;
+      font-family: var(--font-body); font-size: .6rem;
+      letter-spacing: 2px; text-transform: uppercase; color: var(--muted);
+      cursor: pointer; box-shadow: var(--shadow);
+      transition: background .15s, color .15s; z-index: 300;
+    }
+    #createTrigger:hover { background: var(--bg2); color: var(--accent3); }
 
-  /* Carousel */
-  .carousel-wrap {
-    flex: 1;
-    min-width: 200px;
-    min-height: 200px;
-    margin: 0 8px 0 12px;
-    position: relative;
-    border-radius: 20px 0 0 20px;
-    overflow: hidden;
-  }
-  .carousel-inner { width: 100%; height: 100%; position: relative; }
-  .carousel-slide {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity 1.5s ease;
-    background: var(--color-img-border) center/cover no-repeat;
-    background-blend-mode: screen;
-    border-radius: 20px 0 0 20px;
-    display: flex;
-    align-items: flex-start;
-    padding: 8px 0 0 16px;
-  }
-  .carousel-slide.active { opacity: 1; }
-  .slide-inner {
-    position: absolute;
-    inset: 8px 0 8px 8px;
-    border-left: 1px dashed #fbfbfb;
-    border-top: 1px dashed #fbfbfb;
-    border-bottom: 1px dashed #fbfbfb;
-    border-radius: 20px 0 0 20px;
-    background: center/cover no-repeat;
-  }
-  .slide-label {
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 7px;
-    font-size: 26px;
-    mix-blend-mode: screen;
-    text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
-    font-family: var(--font-display);
-    z-index: 2;
-    position: relative;
-    margin-top: 4px;
-  }
+    #createOverlay { position: fixed; inset: 0; z-index: 400; background: rgba(43,35,24,.55); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; }
+    #createOverlay.active { display: flex; }
 
-  /* About section */
-  .about-section {
-    padding: 0 12px;
-    word-break: normal;
-    overflow-wrap: normal;
-    clear: both;
-  }
-  .about-section p { margin-bottom: 8px; line-height: 1.6; font-size: 13px; }
+    #createModal { background: var(--card); border: 2px solid var(--accent); border-radius: var(--radius); box-shadow: 8px 8px 0 rgba(78,94,68,.35); width: min(860px,95vw); max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
 
-  /* Interests */
-  .interests-section { padding: 0 8px; }
-  .interest-block { margin: 8px 0; font-size: 13px; }
-  .interest-label {
-    display: inline-block;
-    background: var(--color-text);
-    color: var(--color-scrollbox);
-    font-weight: bold;
-    text-transform: uppercase;
-    padding: 1px 8px;
-    margin-left: -8px;
-    font-size: 12px;
-  }
+    .cm-header { background: var(--accent3); color: var(--card); font-family: var(--font-head); font-style: italic; font-size: 1.3rem; padding: 14px 22px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--accent); flex-shrink: 0; }
+    .cm-close { background: none; border: none; cursor: pointer; color: var(--card); font-size: 1rem; opacity: .8; transition: opacity .15s; }
+    .cm-close:hover { opacity: 1; }
 
-  /* Ribbons */
-  .ribbons-section { padding: 8px; }
-  .ribbons-row { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; }
-  .ribbon-item img {
-    height: 62px;
-    display: block;
-    transition: transform 0.2s;
-  }
-  .ribbon-item img:hover { transform: scale(1.05); }
+    .cm-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--bg2); overflow-x: auto; }
+    .cm-tab { padding: 9px 16px; border: none; background: none; font-family: var(--font-body); font-size: .65rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; transition: color .15s; }
+    .cm-tab:hover { color: var(--accent3); }
+    .cm-tab.active { color: var(--accent3); border-bottom-color: var(--accent3); }
 
-  /* Favorites */
-  .favorites-section { padding: 0 8px 12px; }
-  .fav-block { font-size: 13px; margin-bottom: 4px; }
-  .fav-label {
-    display: inline-block;
-    background: var(--color-text);
-    color: var(--color-scrollbox);
-    font-weight: bold;
-    text-transform: uppercase;
-    padding: 1px 8px;
-    font-size: 12px;
-  }
-  .fav-label i { font-size: 11px; margin-right: 3px; }
+    .cm-body { overflow-y: auto; padding: 22px 26px; flex: 1; scrollbar-width: thin; scrollbar-color: var(--accent2) transparent; }
+    .cm-pane { display: none; }
+    .cm-pane.active { display: block; }
 
-  /* Fav Characters */
-  .fav-chars {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    color: var(--color-scrollbox);
-    clear: both;
-    padding: 8px;
-  }
-  .fav-char-card {
-    margin: 4px;
-    background: var(--color-text);
-    border-radius: 20px;
-    height: 140px;
-    width: 140px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-  .fav-char-img {
-    flex: 1;
-    background: var(--color-accent) center/cover no-repeat;
-    border-radius: 20px 20px 0 0;
-    border: 3px solid var(--color-text);
-    border-bottom: none;
-  }
-  .fav-char-name {
-    text-align: center;
-    text-transform: uppercase;
-    padding: 4px 12px;
-    font-size: 11px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: #fff;
-  }
+    .cm-row { margin-bottom: 16px; }
+    .cm-row label { display: block; font-size: .62rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 5px; }
+    .cm-row input[type="text"], .cm-row textarea, .cm-row select { width: 100%; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-family: var(--font-body); font-size: .8rem; color: var(--text); outline: none; transition: border-color .15s; }
+    .cm-row input:focus, .cm-row textarea:focus { border-color: var(--accent); }
+    .cm-row textarea { resize: vertical; min-height: 72px; }
+    .cm-row select { cursor: pointer; }
 
-  /* Featured characters row */
-  .featured-chars {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 16px 20px;
-  }
-  .featured-char {
-    margin: 4px;
-    padding: 8px;
-    background: var(--color-scrollbox);
-    border-radius: 20px;
-    box-shadow: 4px 4px 0 rgba(var(--color-accent-rgb), 0.5);
-    position: relative;
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-  .featured-char:hover { transform: translateY(-2px); }
-  .featured-char-img {
-    background: var(--color-accent) center/cover no-repeat;
-    height: 150px;
-    width: 150px;
-    border-radius: 20px;
-  }
-  .featured-char-name {
-    text-align: center;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-top: 6px;
-    font-weight: bold;
-    color: var(--color-text);
-  }
+    /* toggle switches */
+    .cm-toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px dashed var(--border); font-size: .78rem; }
+    .cm-switch { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+    .cm-switch input { opacity: 0; width: 0; height: 0; }
+    .cm-switch .sw-track { position: absolute; inset: 0; border-radius: 20px; background: var(--bg3); cursor: pointer; transition: background .2s; }
+    .cm-switch .sw-track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: var(--card); transition: left .2s; }
+    .cm-switch input:checked + .sw-track { background: var(--accent); }
+    .cm-switch input:checked + .sw-track::after { left: 19px; }
 
-  /* Credits */
-  .credits-box {
-    text-align: right;
-    padding: 0 8px 16px;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-  .credits-inner {
-    display: inline-block;
-    padding: 4px 12px;
-    font-size: 13px;
-    background: var(--color-scrollbox);
-    border-radius: 20px;
-    box-shadow: 4px 4px 0 rgba(var(--color-accent-rgb), 0.5);
-  }
-  .credits-inner a {
-    color: var(--color-text);
-    text-decoration: none;
-    margin: 0 4px;
-    transition: color 0.2s;
-  }
-  .credits-inner a:hover { color: var(--color-accent); }
+    /* colors */
+    .color-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .color-field { display: flex; align-items: center; gap: 8px; }
+    .color-field input[type="color"] { width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; background: none; padding: 2px; }
+    .color-field span { font-size: .7rem; color: var(--muted); }
 
-  /* ===== CREATOR MODE ===== */
-  #creator-mode {
-    min-height: 100vh;
-    background: #111;
-    color: #eee;
-    font-family: var(--font-body);
-  }
-  .creator-nav {
-    background: #000;
-    padding: 12px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid rgba(var(--color-accent-rgb), 0.4);
-    position: sticky;
-    top: 0;
-    z-index: 200;
-  }
-  .creator-nav h2 {
-    font-family: var(--font-display);
-    font-size: 22px;
-    letter-spacing: 5px;
-    color: var(--color-accent);
-    text-transform: uppercase;
-  }
-  .creator-nav .c-btns { display: flex; gap: 10px; }
-  .c-btn {
-    padding: 6px 18px;
-    border-radius: 20px;
-    border: 1px solid;
-    font-family: var(--font-body);
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .c-btn-save {
-    border-color: var(--color-accent);
-    background: var(--color-accent);
-    color: #fff;
-  }
-  .c-btn-save:hover { opacity: 0.85; }
-  .c-btn-exit {
-    border-color: rgba(255,255,255,0.3);
-    background: transparent;
-    color: #ccc;
-  }
-  .c-btn-exit:hover { background: rgba(255,255,255,0.08); }
+    /* char entries */
+    .char-entry { background: var(--bg2); border-radius: 10px; padding: 14px; margin-bottom: 14px; border: 1px solid var(--border); }
+    .char-entry-head { font-family: var(--font-head); font-style: italic; font-size: 1rem; color: var(--accent3); margin-bottom: 10px; }
 
-  .creator-layout {
-    display: flex;
-    height: calc(100vh - 57px);
-  }
+    /* fronter entries in create mode */
+    .fronter-entry { display: flex; gap: 10px; align-items: flex-start; background: var(--bg2); border-radius: 10px; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border); }
+    .fronter-entry-fields { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .fronter-entry .cm-row { margin: 0; }
+    .fe-remove { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; cursor: pointer; font-size: .7rem; color: var(--muted); transition: background .15s, color .15s; flex-shrink: 0; margin-top: 2px; }
+    .fe-remove:hover { background: #fde0e0; color: #8b1a1a; border-color: #e0a0a0; }
+    .btn-add-fronter { display: flex; align-items: center; gap: 6px; background: var(--bg2); border: 1px dashed var(--border); border-radius: 8px; padding: 8px 14px; cursor: pointer; font-family: var(--font-body); font-size: .68rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); width: 100%; justify-content: center; margin-top: 4px; transition: background .15s, color .15s; }
+    .btn-add-fronter:hover { background: var(--bg3); color: var(--accent3); }
 
-  /* Sidebar */
-  .creator-sidebar {
-    width: 320px;
-    flex-shrink: 0;
-    background: #1a1a1a;
-    overflow-y: auto;
-    border-right: 1px solid rgba(255,255,255,0.08);
-    scrollbar-width: thin;
-    scrollbar-color: #333 #1a1a1a;
-  }
-  .sidebar-section {
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-  .sidebar-section-title {
-    padding: 12px 16px;
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--color-accent);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    user-select: none;
-    background: #1a1a1a;
-    position: sticky;
-    top: 0;
-    z-index: 5;
-  }
-  .sidebar-section-title:hover { background: #222; }
-  .sidebar-section-title .toggle-arrow { transition: transform 0.2s; }
-  .sidebar-section-title.collapsed .toggle-arrow { transform: rotate(-90deg); }
-  .sidebar-body { padding: 12px 16px; }
-  .sidebar-body.hidden { display: none; }
+    /* custom section builder */
+    .custom-sec-entry { background: var(--bg2); border-radius: 10px; padding: 14px; margin-bottom: 14px; border: 1px solid var(--border); }
+    .cse-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .cse-title { font-family: var(--font-head); font-style: italic; font-size: .95rem; color: var(--accent3); }
+    .cse-remove { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px; cursor: pointer; font-size: .65rem; color: var(--muted); transition: background .15s; }
+    .cse-remove:hover { background: #fde0e0; color: #8b1a1a; }
+    .btn-add-section { display: flex; align-items: center; gap: 6px; background: var(--bg2); border: 1px dashed var(--border); border-radius: 8px; padding: 10px 14px; cursor: pointer; font-family: var(--font-body); font-size: .68rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); width: 100%; justify-content: center; margin-top: 8px; transition: background .15s, color .15s; }
+    .btn-add-section:hover { background: var(--bg3); color: var(--accent3); }
 
-  /* Form fields */
-  .field-group { margin-bottom: 14px; }
-  .field-label {
-    display: block;
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #888;
-    margin-bottom: 5px;
-  }
-  .field-input, .field-textarea, .field-select {
-    width: 100%;
-    background: #222;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 8px;
-    color: #eee;
-    font-family: var(--font-body);
-    font-size: 12px;
-    padding: 7px 10px;
-    transition: border-color 0.2s;
-    outline: none;
-  }
-  .field-input:focus, .field-textarea:focus, .field-select:focus {
-    border-color: var(--color-accent);
-  }
-  .field-textarea { resize: vertical; min-height: 70px; }
-  .field-color {
-    width: 40px;
-    height: 32px;
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 8px;
-    cursor: pointer;
-    background: #222;
-    padding: 2px;
-  }
-  .color-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .color-row .field-input { flex: 1; }
-  .field-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
+    .cm-footer { padding: 14px 26px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; justify-content: flex-end; gap: 10px; }
+    .btn-apply { background: var(--accent3); color: var(--card); border: none; border-radius: 8px; padding: 9px 24px; font-family: var(--font-body); font-size: .72rem; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: background .15s; }
+    .btn-apply:hover { background: var(--accent); }
+    .btn-cancel { background: var(--bg2); color: var(--muted); border: 1px solid var(--border); border-radius: 8px; padding: 9px 18px; font-family: var(--font-body); font-size: .72rem; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: background .15s; }
+    .btn-cancel:hover { background: var(--bg3); }
 
-  /* List editor */
-  .list-editor { display: flex; flex-direction: column; gap: 6px; }
-  .list-item-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .list-item-row .field-input { flex: 1; }
-  .list-item-row .field-input.url-input { flex: 1.2; }
-  .list-remove-btn {
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 6px;
-    color: #888;
-    cursor: pointer;
-    padding: 4px 8px;
-    font-size: 12px;
-    transition: all 0.2s;
-  }
-  .list-remove-btn:hover { background: rgba(255,60,60,0.2); border-color: #f66; color: #f99; }
-  .list-add-btn {
-    background: transparent;
-    border: 1px dashed rgba(255,255,255,0.2);
-    border-radius: 8px;
-    color: #888;
-    cursor: pointer;
-    padding: 6px;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    transition: all 0.2s;
-    width: 100%;
-    margin-top: 4px;
-  }
-  .list-add-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+    .hidden-section { display: none !important; }
+    .sec-head.head-hidden { opacity: 0; height: 0; margin: 0; padding: 0; pointer-events: none; overflow: hidden; box-shadow: none; }
 
-  /* Preview pane */
-  .creator-preview {
-    flex: 1;
-    overflow-y: auto;
-    background: #0a0a0a;
-    padding: 16px;
-  }
-  .preview-label {
-    text-align: center;
-    font-size: 10px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #444;
-    margin-bottom: 12px;
-  }
-  .preview-frame {
-    background: #1a1a1a;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.06);
-  }
+    /* credits */
+    .credits { text-align: right; margin-top: 14px; font-size: .62rem; color: var(--muted); }
+    .credits a { color: var(--muted); }
 
-  /* Save notification */
-  .save-toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: var(--color-accent);
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-size: 13px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.3s;
-    pointer-events: none;
-    z-index: 9999;
-  }
-  .save-toast.show { opacity: 1; transform: translateY(0); }
-
-  /* Link style in viewer */
-  .profile-outer a { color: var(--color-text); }
-
-  /* Responsive */
-  @media (max-width: 700px) {
-    .creator-sidebar { width: 260px; }
-    .left-col { width: 100%; max-width: 300px; }
-  }
-  @media (max-width: 500px) {
-    .creator-layout { flex-direction: column; }
-    .creator-sidebar { width: 100%; height: 50vh; }
-    .creator-preview { height: 50vh; }
-  }
-</style>
+    /* responsive */
+    @media (max-width: 940px) { .main-grid { grid-template-columns: 220px 1fr; } .sidebar-right { display: none; } }
+    @media (max-width: 620px) { .main-grid { grid-template-columns: 1fr; } .sidebar-left { position: static; } .avatar-wrap { margin-top: -55px; } }
+  </style>
 </head>
 <body>
 
-<!-- ===== VIEWER MODE ===== -->
-<div id="viewer-mode">
+<!-- BANNER -->
+<div class="banner"><div id="bannerImg"></div></div>
 
-  <nav class="site-nav">
-    <span class="nav-title" id="nav-site-title">My Profile</span>
-    <div class="nav-links">
-      <a href="#" class="nav-btn active" onclick="showSection('profile'); return false;">Profile</a>
-      <a href="#" class="nav-btn" onclick="showSection('directory'); return false;">Directory</a>
-      <a href="#" class="nav-btn" onclick="showSection('about'); return false;">About</a>
-      <button class="nav-btn creator-trigger" onclick="openCreator()">✦ Creator Mode</button>
+<div class="page-wrap">
+<div class="main-grid">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar-left">
+    <div class="card">
+      <div class="left-inner">
+        <div class="avatar-wrap">
+          <div id="avatarEl"><i class="fa-solid fa-leaf"></i></div>
+        </div>
+        <h1 class="username" id="displayName">System<em>Name</em></h1>
+        <p class="tagline" id="displayTagline">collective · they/them · system</p>
+
+        <div class="slabel"><i class="fa-solid fa-compass fa-xs"></i> Pages</div>
+        <ul class="nav-list">
+          <li><a href="YOUR_PERSONALITIES_URL" target="_blank"><span><i class="fa-solid fa-masks-theater nav-icon"></i>&nbsp; Personalities</span><i class="fa-solid fa-arrow-up-right-from-square nav-arrow"></i></a></li>
+          <li><a href="YOUR_SEARCH_URL" target="_blank"><span><i class="fa-solid fa-magnifying-glass nav-icon"></i>&nbsp; Categorical Search</span><i class="fa-solid fa-arrow-up-right-from-square nav-arrow"></i></a></li>
+          <li><a href="YOUR_GUIDE_URL" target="_blank"><span><i class="fa-solid fa-circle-question nav-icon"></i>&nbsp; Uncertainty Guide</span><i class="fa-solid fa-arrow-up-right-from-square nav-arrow"></i></a></li>
+          <li><a href="YOUR_COMMS_URL" target="_blank"><span><i class="fa-solid fa-comments nav-icon"></i>&nbsp; Communications Hub</span><i class="fa-solid fa-arrow-up-right-from-square nav-arrow"></i></a></li>
+        </ul>
+
+        <div class="slabel"><i class="fa-solid fa-link fa-xs"></i> Socials</div>
+        <ul class="social-list">
+          <li><a href="LINK_HERE" target="_blank"><i class="fab fa-deviantart"></i> DeviantArt</a></li>
+          <li><a href="LINK_HERE" target="_blank"><i class="fas fa-paw"></i> FurAffinity</a></li>
+          <li><a href="LINK_HERE" target="_blank"><i class="fab fa-bluesky"></i> Bluesky</a></li>
+          <li><a href="LINK_HERE" target="_blank"><i class="fab fa-tumblr"></i> Tumblr</a></li>
+          <li><a href="#" target="_blank"><i class="fab fa-discord"></i> system#0000</a></li>
+        </ul>
+      </div>
     </div>
-  </nav>
+  </aside>
 
-  <div class="site-wrapper">
+  <!-- CENTER SCROLL BOX -->
+  <main>
+    <div class="scroll-card">
 
-    <!-- Banner -->
-    <div class="profile-banner no-image" id="profile-banner"></div>
+      <!-- Music bar -->
+      <div class="music-bar" id="musicBarSection">
+        <iframe class="yt-embed" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=0&controls=0" title="bg music" allow="autoplay"></iframe>
+        <i class="fa-solid fa-music"></i>
+        <div class="ticker-wrap"><span id="musicTicker">♪ &nbsp;song title — artist &nbsp;&nbsp;&nbsp;&nbsp; ♪ &nbsp;song title — artist &nbsp;&nbsp;&nbsp;&nbsp; ♪ &nbsp;song title — artist &nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+      </div>
 
-    <div class="main-content" id="section-profile">
+      <div class="scroll-inner" id="scrollInner">
 
-      <!-- Profile card outer -->
-      <div class="profile-outer" id="profile-outer-bg">
-
-        <div class="content-row">
-
-          <!-- Left column -->
-          <div class="left-col">
-            <div class="left-inner" style="position:relative">
-              <div class="left-icon-decor"><i class="fa-solid fa-cloud"></i></div>
-              <div class="left-username" id="disp-username">username</div>
-              <a class="left-pagedoll" id="disp-pagedoll-link" href="#">
-                <img id="disp-pagedoll-img" src="" alt="" onerror="this.style.display='none'" style="display:none">
-              </a>
-              <div class="focal-image placeholder" id="disp-focal-image">[ focal image ]</div>
-              <div class="left-info">
-                <div id="disp-namepronouns">name, pro/nouns, birthday</div>
-                <div class="icon-links" id="disp-icon-links"></div>
-              </div>
+        <!-- ABOUT US -->
+        <div id="aboutSection">
+          <div class="sec-head" id="aboutHead"><i class="fa-solid fa-seedling"></i> About Us</div>
+          <p class="prose" id="aboutText">Write about your system here — your collective identity, how you communicate, what you'd like visitors to know first. This box scrolls so take as much space as you need.</p>
+          <p class="prose" id="aboutText2">Second paragraph if you'd like. A note on interaction preferences, a friendly hello, or anything that feels right.</p>
+          <div class="tz-widget" id="tzWidget">
+            <i class="fa-solid fa-clock"></i>
+            <div class="tz-right">
+              <div class="tz-label">Our Timezone</div>
+              <div id="tzName">—</div>
+              <div id="tzClock">--:--</div>
             </div>
-          </div>
-
-          <!-- Right column -->
-          <div class="right-col">
-            <div class="right-inner">
-              <div class="scroll-icon"><i class="fa-solid fa-angles-down"></i></div>
-
-              <!-- Music bar -->
-              <div class="music-bar" id="disp-music-bar">
-                <iframe id="disp-yt-iframe" src="about:blank" allow="autoplay"></iframe>
-                <i class="fa-solid fa-volume-up" style="margin-right:8px"></i>
-                <span id="disp-lyrics">long line of lyrics you can put down here / it will truncate if it gets too long</span>
-              </div>
-
-              <div class="scrollbox">
-
-                <!-- Notices -->
-                <div class="section-header"><i class="fa-solid fa-angles-right"></i> notices!</div>
-                <div class="notices-section">
-                  <div id="disp-notices-pagedoll" class="pagedoll-float-right"></div>
-                  <ul id="disp-notices-list"></ul>
-                </div>
-
-                <!-- Art Status + Carousel -->
-                <div class="status-carousel-row" style="clear:both">
-                  <div class="art-status" id="disp-art-status"></div>
-                  <div class="carousel-wrap" id="disp-carousel"></div>
-                </div>
-
-                <!-- About -->
-                <div class="section-header" style="margin-top:12px"><i class="fa-solid fa-angles-right"></i> about me!</div>
-                <div class="about-section">
-                  <div id="disp-about-pagedoll" class="pagedoll-float-right"></div>
-                  <p id="disp-about-text">Write about yourself here.</p>
-                </div>
-
-                <!-- Interests -->
-                <div class="interests-section" style="clear:both">
-                  <div class="interest-block" id="disp-games-block">
-                    <span class="interest-label"><i class="fa-solid fa-gamepad small"></i> games:</span>
-                    <span id="disp-games"> content.</span>
-                  </div>
-                  <div class="interest-block" id="disp-media-block">
-                    <span class="interest-label"><i class="fa-solid fa-tv small"></i> media:</span>
-                    <span id="disp-media"> content.</span>
-                  </div>
-                  <div class="interest-block" id="disp-music-block">
-                    <span class="interest-label"><i class="fa-solid fa-music small"></i> music:</span>
-                    <span id="disp-music-interests"> content.</span>
-                  </div>
-                  <div class="interest-block" id="disp-links-block">
-                    <span class="interest-label"><i class="fa-solid fa-book small"></i> links:</span>
-                    <span id="disp-links-list"></span>
-                  </div>
-                </div>
-
-                <!-- Ribbons -->
-                <div class="ribbons-section">
-                  <span class="fav-label"><i class="fa-solid fa-award small"></i> ribbons:</span>
-                  <div class="ribbons-row" id="disp-ribbons"></div>
-                </div>
-
-                <!-- Favorites -->
-                <div class="section-header"><i class="fa-solid fa-angles-right"></i> favorites!</div>
-                <div class="favorites-section">
-                  <div id="disp-fav-left-pagedoll" class="pagedoll-float-left"></div>
-                  <div id="disp-fav-right-pagedoll" class="pagedoll-float-right"></div>
-                  <div class="fav-block">
-                    <span class="fav-label"><i class="fa-solid fa-headphones"></i> songs</span>
-                    <span id="disp-fav-songs"> song_name, song_name</span>
-                  </div>
-                  <div class="fav-block">
-                    <span class="fav-label"><i class="fa-solid fa-film"></i> movies</span>
-                    <span id="disp-fav-movies"> movie_name, movie_name</span>
-                  </div>
-                  <div class="fav-block">
-                    <span class="fav-label"><i class="fa-solid fa-crow"></i> animals</span>
-                    <span id="disp-fav-animals"> animal_name, animal_name</span>
-                  </div>
-                  <div class="fav-block">
-                    <span class="fav-label"><i class="fa-solid fa-utensils"></i> foods</span>
-                    <span id="disp-fav-foods"> food_name, food_name</span>
-                  </div>
-                  <div class="fav-block">
-                    <span class="fav-label"><i class="fa-solid fa-palette"></i> colors</span>
-                    <span id="disp-fav-colors"> color_name, color_name</span>
-                  </div>
-                  <div class="fav-block">
-                    <span class="fav-label"><i class="fa-solid fa-seedling"></i> flowers</span>
-                    <span id="disp-fav-flowers"> flower_name, flower_name</span>
-                  </div>
-                </div>
-
-                <!-- Favorite characters -->
-                <div class="fav-chars" id="disp-fav-chars" style="clear:both"></div>
-
-              </div><!-- END scrollbox -->
-            </div>
-          </div>
-
-        </div><!-- END content row -->
-
-        <!-- Featured characters -->
-        <div class="featured-chars" id="disp-featured-chars"></div>
-
-        <!-- Credits -->
-        <div class="credits-box">
-          <div class="credits-inner">
-            <a href="#" title="character icons credit"><i class="fa-solid fa-pen-nib"></i></a>
-            <a href="#" title="focal image credit"><i class="fa-solid fa-image"></i></a>
-            <a href="https://toyhou.se/37213301.0-carbonate" title="code by teiyoq"><i class="fa-solid fa-feather-pointed"></i></a>
           </div>
         </div>
 
-      </div><!-- END profile outer -->
-    </div><!-- END section-profile -->
+        <div class="divider" id="div1"></div>
 
-    <!-- Directory section -->
-    <div class="main-content" id="section-directory" style="display:none">
-      <div style="max-width:900px;margin:0 auto;padding:40px 0;text-align:center">
-        <h2 style="font-family:var(--font-display);font-size:36px;letter-spacing:6px;color:#fff;text-shadow:3px 3px 0 var(--color-accent);margin-bottom:16px">DIRECTORY</h2>
-        <p style="color:#aaa;font-size:13px;letter-spacing:2px">Your character directory goes here.</p>
+        <!-- FREQUENT FRONTERS -->
+        <div id="frontersSection">
+          <div class="sec-head" id="frontersHead"><i class="fa-solid fa-users"></i> Frequent Fronters</div>
+          <div class="slideshow" id="slideshow">
+            <div class="slide active" style="background-image: url('');"><div class="slide-caption">fronter name · role</div></div>
+            <div class="slide" style="background-image: url('');"><div class="slide-caption">fronter name · role</div></div>
+            <div class="slide" style="background-image: url('');"><div class="slide-caption">fronter name · role</div></div>
+            <div class="slide-ph" id="slidePh"><i class="fa-regular fa-image"></i>Add fronter image URLs in Create Mode</div>
+          </div>
+          <div class="slide-dots" id="slideDots">
+            <div class="dot active" onclick="goSlide(0)"></div>
+            <div class="dot" onclick="goSlide(1)"></div>
+            <div class="dot" onclick="goSlide(2)"></div>
+          </div>
+          <!-- Fronter profile cards grid -->
+          <div class="fronter-grid" id="fronterGrid">
+            <!-- populated by JS / Create Mode -->
+            <div class="fronter-card fronter-add" onclick="openCreate('tabFronters')" title="Add fronter in Create Mode">
+              <i class="fa-solid fa-plus"></i>
+              <span>Add</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider" id="div2"></div>
+
+        <!-- DISCLAIMER -->
+        <div id="disclaimerSection">
+          <div class="sec-head" id="disclaimerHead"><i class="fa-solid fa-circle-info"></i> Disclaimer</div>
+          <div class="disclaimer-box">
+            <ul id="disclaimerList">
+              <li>Write your first disclaimer or interaction note here.</li>
+              <li>Add content warnings, DNI criteria, or system-specific communication notes.</li>
+              <li>Preferred contact methods, comfort topics, or anything visitors should know before reaching out.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- CUSTOM SECTIONS MOUNT POINT -->
+        <div id="customSectionsMount"></div>
+
+      </div><!-- /scroll-inner -->
+    </div>
+  </main>
+
+  <!-- RIGHT SIDEBAR — character cards -->
+  <aside class="sidebar-right">
+
+    <div class="char-card" id="card1">
+      <div class="char-thumb" id="ct1" style="background-image: url('');"><i class="fa-solid fa-paw"></i><div class="char-thumb-overlay"></div><div class="char-thumb-name" id="cname1">Member Name</div></div>
+      <button class="char-toggle" onclick="togglePanel('panel1',this)" aria-expanded="false"><span>View Info</span><i class="fa-solid fa-chevron-down toggle-icon"></i></button>
+      <div class="char-panel" id="panel1">
+        <div class="cp-header"><div class="cp-header-left"><i class="fa-solid fa-id-card"></i> <span id="cpname1">Member Name</span></div><button class="cp-close" onclick="closePanel('panel1')"><i class="fa-solid fa-xmark"></i></button></div>
+        <div class="cp-img" id="cpimg1" style="background-image: url('');"><i class="fa-solid fa-paw"></i></div>
+        <div class="cp-body">
+          <div class="cp-row"><span class="cp-label">Species</span><span class="cp-val" id="cpspecies1">Species placeholder</span></div>
+          <div class="cp-row"><span class="cp-label">Bio</span><span class="cp-val" id="cpbio1">A short description of this member — their role, personality, how they communicate.</span></div>
+          <div class="cp-row"><span class="cp-label">Traits</span><div class="cp-traits" id="cptraits1"><span class="cp-trait">trait one</span><span class="cp-trait">trait two</span><span class="cp-trait">trait three</span></div></div>
+          <a href="#" target="_blank" class="cp-link" id="cplink1"><i class="fa-solid fa-arrow-up-right-from-square fa-xs"></i> Full page</a>
+        </div>
       </div>
     </div>
 
-    <!-- About section -->
-    <div class="main-content" id="section-about" style="display:none">
-      <div style="max-width:700px;margin:0 auto;padding:40px 0;text-align:center">
-        <h2 style="font-family:var(--font-display);font-size:36px;letter-spacing:6px;color:#fff;text-shadow:3px 3px 0 var(--color-accent);margin-bottom:16px">ABOUT</h2>
-        <p id="disp-about-page" style="color:#ccc;font-size:13px;line-height:1.8;letter-spacing:1px">Your about page content goes here.</p>
+    <div class="char-card" id="card2">
+      <div class="char-thumb" id="ct2" style="background-image: url('');"><i class="fa-solid fa-paw"></i><div class="char-thumb-overlay"></div><div class="char-thumb-name" id="cname2">Member Name</div></div>
+      <button class="char-toggle" onclick="togglePanel('panel2',this)" aria-expanded="false"><span>View Info</span><i class="fa-solid fa-chevron-down toggle-icon"></i></button>
+      <div class="char-panel" id="panel2">
+        <div class="cp-header"><div class="cp-header-left"><i class="fa-solid fa-id-card"></i> <span id="cpname2">Member Name</span></div><button class="cp-close" onclick="closePanel('panel2')"><i class="fa-solid fa-xmark"></i></button></div>
+        <div class="cp-img" id="cpimg2" style="background-image: url('');"><i class="fa-solid fa-paw"></i></div>
+        <div class="cp-body">
+          <div class="cp-row"><span class="cp-label">Species</span><span class="cp-val" id="cpspecies2">Species placeholder</span></div>
+          <div class="cp-row"><span class="cp-label">Bio</span><span class="cp-val" id="cpbio2">A short description of this member.</span></div>
+          <div class="cp-row"><span class="cp-label">Traits</span><div class="cp-traits" id="cptraits2"><span class="cp-trait">trait one</span><span class="cp-trait">trait two</span><span class="cp-trait">trait three</span></div></div>
+          <a href="#" target="_blank" class="cp-link" id="cplink2"><i class="fa-solid fa-arrow-up-right-from-square fa-xs"></i> Full page</a>
+        </div>
       </div>
     </div>
 
+    <div class="char-card" id="card3">
+      <div class="char-thumb" id="ct3" style="background-image: url('');"><i class="fa-solid fa-paw"></i><div class="char-thumb-overlay"></div><div class="char-thumb-name" id="cname3">Member Name</div></div>
+      <button class="char-toggle" onclick="togglePanel('panel3',this)" aria-expanded="false"><span>View Info</span><i class="fa-solid fa-chevron-down toggle-icon"></i></button>
+      <div class="char-panel" id="panel3">
+        <div class="cp-header"><div class="cp-header-left"><i class="fa-solid fa-id-card"></i> <span id="cpname3">Member Name</span></div><button class="cp-close" onclick="closePanel('panel3')"><i class="fa-solid fa-xmark"></i></button></div>
+        <div class="cp-img" id="cpimg3" style="background-image: url('');"><i class="fa-solid fa-paw"></i></div>
+        <div class="cp-body">
+          <div class="cp-row"><span class="cp-label">Species</span><span class="cp-val" id="cpspecies3">Species placeholder</span></div>
+          <div class="cp-row"><span class="cp-label">Bio</span><span class="cp-val" id="cpbio3">A short description of this member.</span></div>
+          <div class="cp-row"><span class="cp-label">Traits</span><div class="cp-traits" id="cptraits3"><span class="cp-trait">trait one</span><span class="cp-trait">trait two</span><span class="cp-trait">trait three</span></div></div>
+          <a href="#" target="_blank" class="cp-link" id="cplink3"><i class="fa-solid fa-arrow-up-right-from-square fa-xs"></i> Full page</a>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+</div><!-- /main-grid -->
+
+<div class="credits">layout by you &nbsp;·&nbsp; <a href="https://toyhou.se/37213301.0-carbonate" target="_blank">carbonate base by teiyoq</a></div>
+</div><!-- /page-wrap -->
+
+<!-- CREATE MODE TRIGGER -->
+<button id="createTrigger" onclick="openCreate()"><i class="fa-solid fa-pen-to-square"></i> &nbsp;create mode</button>
+
+<!-- CREATE MODE MODAL -->
+<div id="createOverlay">
+<div id="createModal">
+  <div class="cm-header">
+    <span><i class="fa-solid fa-wand-magic-sparkles"></i> &nbsp;Create Mode</span>
+    <button class="cm-close" onclick="closeCreate()"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="cm-tabs">
+    <button class="cm-tab active" data-tab="tabText" onclick="switchTab(this)">Text</button>
+    <button class="cm-tab" data-tab="tabFronters" onclick="switchTab(this)">Fronters</button>
+    <button class="cm-tab" data-tab="tabSections" onclick="switchTab(this)">Custom Sections</button>
+    <button class="cm-tab" data-tab="tabColors" onclick="switchTab(this)">Colors</button>
+    <button class="cm-tab" data-tab="tabImages" onclick="switchTab(this)">Images</button>
+    <button class="cm-tab" data-tab="tabVisibility" onclick="switchTab(this)">Visibility</button>
+  </div>
+  <div class="cm-body">
+
+    <!-- TAB: TEXT -->
+    <div class="cm-pane active" id="tabText">
+      <div class="cm-row"><label>System / Display Name (wrap a word in *asterisks* for italic)</label><input type="text" id="cm_name" placeholder="System*Name*"></div>
+      <div class="cm-row"><label>Tagline</label><input type="text" id="cm_tagline" placeholder="collective · they/them · system"></div>
+      <div class="cm-row"><label>About Us — Paragraph 1</label><textarea id="cm_about1"></textarea></div>
+      <div class="cm-row"><label>About Us — Paragraph 2</label><textarea id="cm_about2"></textarea></div>
+      <div class="cm-row"><label>Timezone string (e.g. America/Chicago)</label><input type="text" id="cm_tz" placeholder="America/Chicago"></div>
+      <div class="cm-row"><label>Timezone Label (shown to visitors)</label><input type="text" id="cm_tzLabel" placeholder="Central Time (CT)"></div>
+      <div class="cm-row"><label>Music Ticker Text</label><input type="text" id="cm_ticker" placeholder="♪ song title — artist"></div>
+      <div class="cm-row"><label>Disclaimer — one item per line</label><textarea id="cm_disclaimer" rows="5" placeholder="Line 1&#10;Line 2&#10;Line 3"></textarea></div>
+      <hr style="border:none;border-top:1px dashed var(--border);margin:16px 0">
+      <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:12px;">Sidebar Member Cards</div>
+      <div class="char-entry">
+        <div class="char-entry-head">Card 1</div>
+        <div class="cm-row"><label>Name</label><input type="text" id="cm_c1name"></div>
+        <div class="cm-row"><label>Species</label><input type="text" id="cm_c1species"></div>
+        <div class="cm-row"><label>Bio</label><textarea id="cm_c1bio" rows="2"></textarea></div>
+        <div class="cm-row"><label>Traits (comma-separated)</label><input type="text" id="cm_c1traits"></div>
+        <div class="cm-row"><label>Full Page URL</label><input type="text" id="cm_c1link"></div>
+      </div>
+      <div class="char-entry">
+        <div class="char-entry-head">Card 2</div>
+        <div class="cm-row"><label>Name</label><input type="text" id="cm_c2name"></div>
+        <div class="cm-row"><label>Species</label><input type="text" id="cm_c2species"></div>
+        <div class="cm-row"><label>Bio</label><textarea id="cm_c2bio" rows="2"></textarea></div>
+        <div class="cm-row"><label>Traits (comma-separated)</label><input type="text" id="cm_c2traits"></div>
+        <div class="cm-row"><label>Full Page URL</label><input type="text" id="cm_c2link"></div>
+      </div>
+      <div class="char-entry">
+        <div class="char-entry-head">Card 3</div>
+        <div class="cm-row"><label>Name</label><input type="text" id="cm_c3name"></div>
+        <div class="cm-row"><label>Species</label><input type="text" id="cm_c3species"></div>
+        <div class="cm-row"><label>Bio</label><textarea id="cm_c3bio" rows="2"></textarea></div>
+        <div class="cm-row"><label>Traits (comma-separated)</label><input type="text" id="cm_c3traits"></div>
+        <div class="cm-row"><label>Full Page URL</label><input type="text" id="cm_c3link"></div>
+      </div>
+    </div>
+
+    <!-- TAB: FRONTERS -->
+    <div class="cm-pane" id="tabFronters">
+      <p style="font-size:.76rem;color:var(--muted);margin-bottom:16px;line-height:1.7">Add profile cards for frequent fronters. Each card links to their (future) profile page and shows a portrait.</p>
+      <div id="fronterEntries"></div>
+      <button class="btn-add-fronter" onclick="addFronterEntry()"><i class="fa-solid fa-plus"></i> Add Fronter</button>
+    </div>
+
+    <!-- TAB: CUSTOM SECTIONS -->
+    <div class="cm-pane" id="tabSections">
+      <p style="font-size:.76rem;color:var(--muted);margin-bottom:16px;line-height:1.7">Build additional sections to append after the Disclaimer. Each section has an optional header bar and supports prose, bullets, an image, or a link list.</p>
+      <div id="customSecEntries"></div>
+      <button class="btn-add-section" onclick="addCustomSection()"><i class="fa-solid fa-plus"></i> Add Section</button>
+    </div>
+
+    <!-- TAB: COLORS -->
+    <div class="cm-pane" id="tabColors">
+      <p style="font-size:.76rem;color:var(--muted);margin-bottom:16px;line-height:1.7">Adjust the color tokens. Changes apply on click of Apply.</p>
+      <div class="color-grid">
+        <div class="cm-row"><label>Page Background</label><div class="color-field"><input type="color" id="cc_bg" value="#f2ede6"><span>--bg</span></div></div>
+        <div class="cm-row"><label>Card Surface</label><div class="color-field"><input type="color" id="cc_card" value="#faf8f4"><span>--card</span></div></div>
+        <div class="cm-row"><label>Accent (sage)</label><div class="color-field"><input type="color" id="cc_accent" value="#7a8c6e"><span>--accent</span></div></div>
+        <div class="cm-row"><label>Accent Dark</label><div class="color-field"><input type="color" id="cc_accent3" value="#4e5e44"><span>--accent3</span></div></div>
+        <div class="cm-row"><label>Warm Accent</label><div class="color-field"><input type="color" id="cc_warm" value="#c4956a"><span>--warm</span></div></div>
+        <div class="cm-row"><label>Text Color</label><div class="color-field"><input type="color" id="cc_text" value="#2b2318"><span>--text</span></div></div>
+      </div>
+    </div>
+
+    <!-- TAB: IMAGES -->
+    <div class="cm-pane" id="tabImages">
+      <p style="font-size:.76rem;color:var(--muted);margin-bottom:16px;line-height:1.7">Paste hosted image URLs (Toyhouse, Imgur, Discord CDN, etc.).</p>
+      <div class="cm-row"><label>Banner Image URL</label><input type="text" id="cm_banner" placeholder="https://..."></div>
+      <div class="cm-row"><label>Avatar Image URL</label><input type="text" id="cm_avatar" placeholder="https://..."></div>
+      <hr style="border:none;border-top:1px dashed var(--border);margin:14px 0">
+      <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:12px;">Slideshow Images</div>
+      <div class="cm-row"><label>Slide 1 — Image URL</label><input type="text" id="cm_s1" placeholder="https://..."></div>
+      <div class="cm-row"><label>Slide 1 — Caption</label><input type="text" id="cm_s1cap" placeholder="fronter name · role"></div>
+      <div class="cm-row"><label>Slide 2 — Image URL</label><input type="text" id="cm_s2" placeholder="https://..."></div>
+      <div class="cm-row"><label>Slide 2 — Caption</label><input type="text" id="cm_s2cap" placeholder="fronter name · role"></div>
+      <div class="cm-row"><label>Slide 3 — Image URL</label><input type="text" id="cm_s3" placeholder="https://..."></div>
+      <div class="cm-row"><label>Slide 3 — Caption</label><input type="text" id="cm_s3cap" placeholder="fronter name · role"></div>
+      <hr style="border:none;border-top:1px dashed var(--border);margin:14px 0">
+      <div style="font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin-bottom:12px;">Sidebar Card Images</div>
+      <div class="cm-row"><label>Card 1 Image URL</label><input type="text" id="cm_ci1" placeholder="https://..."></div>
+      <div class="cm-row"><label>Card 2 Image URL</label><input type="text" id="cm_ci2" placeholder="https://..."></div>
+      <div class="cm-row"><label>Card 3 Image URL</label><input type="text" id="cm_ci3" placeholder="https://..."></div>
+    </div>
+
+    <!-- TAB: VISIBILITY -->
+    <div class="cm-pane" id="tabVisibility">
+      <p style="font-size:.76rem;color:var(--muted);margin-bottom:14px;line-height:1.7">Show or hide each section and its header bar independently.</p>
+      <div style="font-size:.62rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin:10px 0 6px">Section Visibility</div>
+      <div class="cm-toggle-row"><span>Music Bar</span><label class="cm-switch"><input type="checkbox" id="tog_music" checked><span class="sw-track"></span></label></div>
+      <div class="cm-toggle-row"><span>About Us — section</span><label class="cm-switch"><input type="checkbox" id="tog_about" checked><span class="sw-track"></span></label></div>
+      <div class="cm-toggle-row"><span>About Us — header bar</span><label class="cm-switch"><input type="checkbox" id="tog_aboutHead" checked><span class="sw-track"></span></label></div>
+      <div class="cm-toggle-row"><span>Timezone Widget</span><label class="cm-switch"><input type="checkbox" id="tog_tz" checked><span class="sw-track"></span></label></div>
+      <div class="cm-toggle-row"><span>Frequent Fronters — section</span><label class="cm-switch"><input type="checkbox" id="tog_fronters" checked><span class="sw-track"></span></label></div>
+      <div class="cm-toggle-row"><span>Frequent Fronters — header bar</span><label class="cm-switch"><input type="checkbox" id="tog_frontersHead" checked><span class="sw-track"></span></label></div>
+      <div class="cm-toggle-row"><span>Disclaimer — section</span><label class="cm-switch"><input type="checkbox" id="tog_disclaimer" checked><span class="sw-track"></span></label></div>
+      <div class="cm-toggle-row"><span>Disclaimer — header bar</span><label class="cm-switch"><input type="checkbox" id="tog_disclaimerHead" checked><span class="sw-track"></span></label></div>
+      <div style="font-size:.62rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);margin:16px 0 6px">Sidebar Cards</div>
+      <div class="cm-toggle-row"><span>Member Card 1</span><label class="cm-switch"><input type="checkbox" id="tog_card1" checked><span class="sw-track"></span></label></div>
+      <div class="cm-toggle-row"><span>Member Card 2</span><label class="cm-switch"><input type="checkbox" id="tog_card2" checked><span class="sw-track"></span></label></div>
+      <div class="cm-toggle-row"><span>Member Card 3</span><label class="cm-switch"><input type="checkbox" id="tog_card3" checked><span class="sw-track"></span></label></div>
+    </div>
+
+  </div><!-- /cm-body -->
+  <div class="cm-footer">
+    <button class="btn-cancel" onclick="closeCreate()">Cancel</button>
+    <button class="btn-apply" onclick="applyCreate()"><i class="fa-solid fa-check"></i> &nbsp;Apply</button>
   </div>
 </div>
-<!-- END viewer mode -->
-
-<!-- ===== CREATOR MODE ===== -->
-<div id="creator-mode">
-  <nav class="creator-nav">
-    <h2>✦ Creator Mode</h2>
-    <div class="c-btns">
-      <button class="c-btn c-btn-save" onclick="saveAndPreview()">Save & Preview</button>
-      <button class="c-btn c-btn-exit" onclick="exitCreator()">Exit</button>
-    </div>
-  </nav>
-
-  <div class="creator-layout">
-
-    <!-- Sidebar controls -->
-    <div class="creator-sidebar">
-
-      <!-- COLORS -->
-      <div class="sidebar-section">
-        <div class="sidebar-section-title" onclick="toggleSection(this)">
-          Colors & Theme <span class="toggle-arrow">▼</span>
-        </div>
-        <div class="sidebar-body">
-          <div class="field-group">
-            <label class="field-label">Accent Color</label>
-            <div class="color-row">
-              <input type="color" class="field-color" id="c-accent-color" value="#d94a79" oninput="syncColorHex(this,'c-accent-hex')">
-              <input type="text" class="field-input" id="c-accent-hex" value="#d94a79" oninput="syncColorPicker(this,'c-accent-color')">
-            </div>
-          </div>
-          <div class="field-group">
-            <label class="field-label">Background Color</label>
-            <div class="color-row">
-              <input type="color" class="field-color" id="c-bg-color" value="#ffd9e5" oninput="syncColorHex(this,'c-bg-hex')">
-              <input type="text" class="field-input" id="c-bg-hex" value="#ffd9e5" oninput="syncColorPicker(this,'c-bg-color')">
-            </div>
-          </div>
-          <div class="field-group">
-            <label class="field-label">Text Color</label>
-            <div class="color-row">
-              <input type="color" class="field-color" id="c-text-color" value="#0f0f0f" oninput="syncColorHex(this,'c-text-hex')">
-              <input type="text" class="field-input" id="c-text-hex" value="#0f0f0f" oninput="syncColorPicker(this,'c-text-color')">
-            </div>
-          </div>
-          <div class="field-group">
-            <label class="field-label">Card Background</label>
-            <div class="color-row">
-              <input type="color" class="field-color" id="c-card-color" value="#fbfbfb" oninput="syncColorHex(this,'c-card-hex')">
-              <input type="text" class="field-input" id="c-card-hex" value="#fbfbfb" oninput="syncColorPicker(this,'c-card-color')">
-            </div>
-          </div>
-          <div class="field-group">
-            <label class="field-label">Image Border / Overlay</label>
-            <div class="color-row">
-              <input type="color" class="field-color" id="c-imgborder-color" value="#4c4c4c" oninput="syncColorHex(this,'c-imgborder-hex')">
-              <input type="text" class="field-input" id="c-imgborder-hex" value="#4c4c4c" oninput="syncColorPicker(this,'c-imgborder-color')">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- FONTS -->
-      <div class="sidebar-section">
-        <div class="sidebar-section-title" onclick="toggleSection(this)">
-          Fonts <span class="toggle-arrow">▼</span>
-        </div>
-        <div class="sidebar-body">
-          <div class="field-group">
-            <label class="field-label">Body Font</label>
-            <select class="field-select" id="c-font-body">
-              <option value="'Andale Mono', monospace">Andale Mono (default)</option>
-              <option value="'Courier New', monospace">Courier New</option>
-              <option value="Georgia, serif">Georgia</option>
-              <option value="'Times New Roman', serif">Times New Roman</option>
-              <option value="Verdana, sans-serif">Verdana</option>
-              <option value="Tahoma, sans-serif">Tahoma</option>
-              <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
-              <option value="'Comic Sans MS', cursive">Comic Sans MS</option>
-            </select>
-          </div>
-          <div class="field-group">
-            <label class="field-label">Display / Header Font</label>
-            <select class="field-select" id="c-font-display">
-              <option value="Impact, sans-serif">Impact (default)</option>
-              <option value="'Arial Black', sans-serif">Arial Black</option>
-              <option value="Georgia, serif">Georgia</option>
-              <option value="'Times New Roman', serif">Times New Roman</option>
-              <option value="Verdana, sans-serif">Verdana</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- IDENTITY -->
-      <div class="sidebar-section">
-        <div class="sidebar-section-title" onclick="toggleSection(this)">
-          Identity <span class="toggle-arrow">▼</span>
-        </div>
-        <div class="sidebar-body">
-          <div class="field-group">
-            <label class="field-label">Site Title (nav bar)</label>
-            <input type="text" class="field-input" id="c-site-title" value="My Profile" placeholder="My Profile">
-          </div>
-          <div class="field-group">
-            <label class="field-label">Username (display)</label>
-            <input type="text" class="field-input" id="c-username" value="username" placeholder="username">
-          </div>
-          <div class="field-group">
-            <label class="field-label">Name / Pronouns / Birthday</label>
-            <input type="text" class="field-input" id="c-namepronouns" value="name, pro/nouns, birthday" placeholder="name, pro/nouns, birthday">
-          </div>
-        </div>
-      </div>
-
-      <!-- IMAGES -->
-      <div class="sidebar-section">
-        <div class="sidebar-section-title" onclick="toggleSection(this)">
-          Images <span class="toggle-arrow">▼</span>
-        </div>
-        <div class="sidebar-body">
-          <div class="field-group">
-            <label class="field-label">Banner Image URL</label>
-            <input type="text" class="field-input" id="c-banner-img" placeholder="https://...">
-          </div>
-          <div class="field-group">
-            <label class="field-label">Focal Image URL (left card)</label>
-            <input type="text" class="field-input" id="c-focal-img" placeholder="https://...">
-          </div>
-          <div class="field-group">
-            <label class="field-label">Background Texture URL</label>
-            <input type="text" class="field-input" id="c-bg-img" placeholder="https://... (optional)">
-          </div>
-          <div class="field-group">
-            <label class="field-label">Hanging Pagedoll URL</label>
-            <input type="text" class="field-input" id="c-pagedoll-img" placeholder="https://...">
-          </div>
-          <div class="field-group">
-            <label class="field-label">Hanging Pagedoll Link</label>
-            <input type="text" class="field-input" id="c-pagedoll-link" placeholder="https://...">
-          </div>
-        </div>
-      </div>
-
-      <!-- MUSIC -->
-      <div class="sidebar-section">
-        <div class="sidebar-section-title" onclick="toggleSection(this)">
-          Music Player <span class="toggle-arrow">▼</span>
-        </div>
-        <div class="sidebar-body">
-          <div class="field-group">
-            <label class="field-label">YouTube Video ID</label>
-            <input type="text" class="field-input" id="c-yt-id" value="dQw4w9WgXcQ" placeholder="dQw4w9WgXcQ">
-            <p style="font-size:10px;color:#666;margin-top:4px">The part after ?v= in the YouTube URL</p>
-          </div>
-          <div class="field-group">
-            <label class="field-label">Lyrics / Marquee Text</label>
-            <input type="text" class="field-input" id="c-lyrics" value="long line of lyrics you can / put down here / it will truncate if it gets too long" placeholder="lyrics...">
-          </div>
-        </div>
-      </div>
-
-      <!-- ICON LINKS -->
-      <div class="sidebar-section">
-        <div class="sidebar-section-title" onclick="toggleSection(this)">
-          Icon Links <span class="toggle-arrow">▼</span>
-        </div>
-        <div class="sidebar-body">
-          <div class="list-editor" id="icon-links-editor"></div>
-          <button class="list-add-btn" onclick="addIconLink()">+ Add Icon Link</button>
-          <p style="font-size:10px;color:#666;margin-top:6px">Use Font Awesome class names, e.g. fa-solid fa-star</p>
-        </div>
-      </div>
-
-      <!-- NOTICES -->
-      <div class="sidebar-section">
-        <div class="sidebar-section-title" onclick="toggleSection(this)">
-          Notices <span class="toggle-arrow">▼</span>
-        </div>
-        <div class="sidebar-body">
-          <div class="field-group">
-            <label class="field-label">Notices Pagedoll URL</label>
-            <input type="text" class="field-input" id="c-notices-pagedoll" placeholder="https://...">
-          </div>
-          <div class="list-editor" id="notices-editor"></div>
-          <button class="list-add-btn" onclick="addNotice()">+ Add Notice</button>
-        </div>
-      </div>
-
-      <!-- ART STATUS -->
-      <div class="sidebar-section">
-        <div class="sidebar-section-title" onclick="toggleSection(this)">
-          Art Status <span class="toggle-arrow">▼</span>
-        </div>
-        <div class="sidebar-body" id="art-status-editor"></div>
-      </div>
-
-      <!-- CAROUSEL -->
-      <div class="sidebar-section">
-        <div class="sidebar-section-title" onclick="toggleSection(this)">
-          Image Carousel <span class="toggle-arrow">▼</span>
-        </div>
-        <div class="sidebar-body">
-          <div class="list-editor" id="carousel-editor"></div>
-          <button class="list-add-btn" onclick="addCarouselSlide()">+ Add Slide</button>
-        </div>
-      </div>
-
-      <!-- ABOUT -->
-      <div class="sidebar-section">
-        <div class="sidebar-section-title" onclick="toggleSection(this)">
-          About Me <span class="toggle-arrow">▼</span>
-        </div>
-        <div class="sidebar-body">
-          <div class="field-group">
-            <label class="field-label">About Pagedoll URL</label>
-            <input type="text" class="field-input" id="c-about-pagedoll" placeholder="https://...">
-          </div>
-          <div class="field-group">
-            <label class="field-label">About Text</label>
-            <textarea class="field-textarea" id="c-about-text" style="min-height:100px" placeholder="Write about yourself...">Write about yourself here.</textarea>
-          </div>
-          <div class="field-group">
-            <label class="field-label">About Page Content (separate About page)</label>
-            <textarea class="field-textarea" id="c-about-page" placeholder="About page text..."></textarea>
-          </div>
-        </div>
-      </div>
-
-      <!-- INTERESTS -->
-      <div class="sidebar-section">
-        <div class="sidebar-section-title" onclick="toggleSection(this)">
-          Interests <span class="toggle-arrow">▼</span>
-        </div>
-        <div class="sidebar-body">
-          <div class="field-group">
-            <label class="field-label">Games</label>
-            <input type="text" class="field-input" id="c-games" value="content." placeholder="game1, game2">
-          </div>
-          <div class="field-group">
-            <label class="field-label">Media</label>
-            <input type="text" class="field-input" id="c-media" value="content." placeholder="show1, show2">
-          </div>
-          <div class="field-group">
-            <label class="field-label">Music Interests</label>
-            <input type="text" class="field-input" id="c-music-interests" value="content." placeholder="artist1, artist2">
-          </div>
-          <div class="field-group">
-            <label class="field-label">Links (comma separated: Label|URL)</label>
-            <input type="text" class="field-input" id="c-links-text" value="" placeholder="My Art|https://..., My Twitter|https://...">
-          </div>
-        </div>
-      </div>
-
-      <!-- RIBBONS -->
-      <div class="sidebar-section">
-        <div class="sidebar-section-title" onclick="toggleSection(this)">
-          Ribbons <span class="toggle-arrow">▼</span>
-        </div>
-        <div class="sidebar-body">
-          <div class="list-editor" id="ribbons-editor"></div>
-          <button class="list-add-btn" onclick="addRibbon()">+ Add Ribbon</button>
-        </div>
-      </div>
-
-      <!-- FAVORITES -->
-      <div class="sidebar-section">
-        <div class="sidebar-section-title" onclick="toggleSection(this)">
-          Favorites <span class="toggle-arrow">▼</span>
-        </div>
-        <div class="sidebar-body">
-          <div class="field-group">
-            <label class="field-label">Fav Left Pagedoll URL</label>
-            <input type="text" class="field-input" id="c-fav-left-pagedoll" placeholder="https://...">
-          </div>
-          <div class="field-group">
-            <label class="field-label">Fav Right Pagedoll URL</label>
-            <input type="text" class="field-input" id="c-fav-right-pagedoll" placeholder="https://...">
-          </div>
-          <div class="field-group">
-            <label class="field-label">Songs (comma separated)</label>
-            <input type="text" class="field-input" id="c-fav-songs" value="song_name, song_name" placeholder="song1, song2">
-          </div>
-          <div class="field-group">
-            <label class="field-label">Movies</label>
-            <input type="text" class="field-input" id="c-fav-movies" value="movie_name, movie_name" placeholder="movie1, movie2">
-          </div>
-          <div class="field-group">
-            <label class="field-label">Animals</label>
-            <input type="text" class="field-input" id="c-fav-animals" value="animal_name, animal_name" placeholder="cat, dog">
-          </div>
-          <div class="field-group">
-            <label class="field-label">Foods</label>
-            <input type="text" class="field-input" id="c-fav-foods" value="food_name, food_name" placeholder="pizza, ramen">
-          </div>
-          <div class="field-group">
-            <label class="field-label">Colors</label>
-            <input type="text" class="field-input" id="c-fav-colors" value="color_name, color_name" placeholder="pink, blue">
-          </div>
-          <div class="field-group">
-            <label class="field-label">Flowers</label>
-            <input type="text" class="field-input" id="c-fav-flowers" value="flower_name, flower_name" placeholder="rose, lily">
-          </div>
-        </div>
-      </div>
-
-      <!-- FAVORITE CHARACTERS -->
-      <div class="sidebar-section">
-        <div class="sidebar-section-title" onclick="toggleSection(this)">
-          Favorite Characters <span class="toggle-arrow">▼</span>
-        </div>
-        <div class="sidebar-body">
-          <div class="list-editor" id="fav-chars-editor"></div>
-          <button class="list-add-btn" onclick="addFavChar()">+ Add Character</button>
-        </div>
-      </div>
-
-      <!-- FEATURED CHARACTERS -->
-      <div class="sidebar-section">
-        <div class="sidebar-section-title" onclick="toggleSection(this)">
-          Featured Characters <span class="toggle-arrow">▼</span>
-        </div>
-        <div class="sidebar-body">
-          <div class="list-editor" id="featured-chars-editor"></div>
-          <button class="list-add-btn" onclick="addFeaturedChar()">+ Add Character</button>
-        </div>
-      </div>
-
-    </div><!-- END creator sidebar -->
-
-    <!-- Preview pane -->
-    <div class="creator-preview">
-      <div class="preview-label">— LIVE PREVIEW —</div>
-      <div class="preview-frame" id="preview-frame">
-        <!-- Viewer content will be cloned here on save -->
-        <p style="color:#555;text-align:center;padding:40px;font-size:12px;letter-spacing:2px">Click "Save & Preview" to see changes rendered here.</p>
-      </div>
-    </div>
-
-  </div>
 </div>
-<!-- END creator mode -->
-
-<div class="save-toast" id="save-toast">✓ Saved!</div>
 
 <script>
-// ===== DATA MODEL =====
-let profileData = {
-  siteTitle: 'My Profile',
-  username: 'username',
-  namePronouns: 'name, pro/nouns, birthday',
-  accentColor: '#d94a79',
-  bgColor: '#ffd9e5',
-  textColor: '#0f0f0f',
-  cardColor: '#fbfbfb',
-  imgBorderColor: '#4c4c4c',
-  fontBody: "'Andale Mono', monospace",
-  fontDisplay: 'Impact, sans-serif',
-  bannerImg: '',
-  focalImg: '',
-  bgImg: '',
-  pagedollImg: '',
-  pagedollLink: '#',
-  ytId: 'dQw4w9WgXcQ',
-  lyrics: 'long line of lyrics you can / put down here / it will truncate if it gets too long',
-  iconLinks: [
-    { icon: 'fa-solid fa-star', title: 'Link 1', url: '#' },
-    { icon: 'fa-solid fa-heart', title: 'Link 2', url: '#' }
-  ],
-  noticesPagedoll: '',
-  notices: ['this is a notice', 'another notice item'],
-  artStatus: [
-    { label: 'Commissions', value: 'closed' },
-    { label: 'Art Trades', value: 'open' },
-    { label: 'Custom Trades', value: 'closed' },
-    { label: 'Art Collabs', value: 'ask' },
-    { label: 'Requests', value: 'closed' }
-  ],
-  carouselSlides: [
-    { img: '', label: 'slide_1', link: '#' },
-    { img: '', label: 'slide_2', link: '#' },
-    { img: '', label: 'slide_3', link: '#' }
-  ],
-  aboutPagedoll: '',
-  aboutText: 'Write about yourself here.',
-  aboutPage: '',
-  games: 'content.',
-  media: 'content.',
-  musicInterests: 'content.',
-  linksText: '',
-  ribbons: [],
-  favLeftPagedoll: '',
-  favRightPagedoll: '',
-  favSongs: 'song_name, song_name',
-  favMovies: 'movie_name, movie_name',
-  favAnimals: 'animal_name, animal_name',
-  favFoods: 'food_name, food_name',
-  favColors: 'color_name, color_name',
-  favFlowers: 'flower_name, flower_name',
-  favChars: [
-    { name: 'chara_name', img: '', link: '#' },
-    { name: 'chara_name', img: '', link: '#' }
-  ],
-  featuredChars: [
-    { name: 'CHARA_NAME', img: '', link: '#' },
-    { name: 'CHARA_NAME', img: '', link: '#' }
-  ]
-};
-
-// Load from localStorage if available
-function loadData() {
+/* ════════════════════════════════════
+   TIMEZONE CLOCK (no seconds)
+════════════════════════════════════ */
+let tzString = Intl.DateTimeFormat().resolvedOptions().timeZone;
+let tzLabel  = tzString;
+function updateClock() {
   try {
-    const saved = localStorage.getItem('profileData');
-    if (saved) profileData = JSON.parse(saved);
-  } catch(e) {}
-}
-function saveData() {
-  try { localStorage.setItem('profileData', JSON.stringify(profileData)); } catch(e) {}
-}
-
-// ===== NAV =====
-function showSection(name) {
-  ['profile','directory','about'].forEach(s => {
-    document.getElementById('section-'+s).style.display = (s===name) ? '' : 'none';
-  });
-}
-
-// ===== CREATOR MODE =====
-function openCreator() {
-  document.getElementById('viewer-mode').style.display = 'none';
-  document.getElementById('creator-mode').style.display = 'block';
-  populateCreatorFields();
-}
-function exitCreator() {
-  document.getElementById('creator-mode').style.display = 'none';
-  document.getElementById('viewer-mode').style.display = 'block';
-}
-
-function collectData() {
-  profileData.siteTitle = document.getElementById('c-site-title').value;
-  profileData.username = document.getElementById('c-username').value;
-  profileData.namePronouns = document.getElementById('c-namepronouns').value;
-  profileData.accentColor = document.getElementById('c-accent-hex').value;
-  profileData.bgColor = document.getElementById('c-bg-hex').value;
-  profileData.textColor = document.getElementById('c-text-hex').value;
-  profileData.cardColor = document.getElementById('c-card-hex').value;
-  profileData.imgBorderColor = document.getElementById('c-imgborder-hex').value;
-  profileData.fontBody = document.getElementById('c-font-body').value;
-  profileData.fontDisplay = document.getElementById('c-font-display').value;
-  profileData.bannerImg = document.getElementById('c-banner-img').value;
-  profileData.focalImg = document.getElementById('c-focal-img').value;
-  profileData.bgImg = document.getElementById('c-bg-img').value;
-  profileData.pagedollImg = document.getElementById('c-pagedoll-img').value;
-  profileData.pagedollLink = document.getElementById('c-pagedoll-link').value || '#';
-  profileData.ytId = document.getElementById('c-yt-id').value;
-  profileData.lyrics = document.getElementById('c-lyrics').value;
-  profileData.noticesPagedoll = document.getElementById('c-notices-pagedoll').value;
-  profileData.aboutPagedoll = document.getElementById('c-about-pagedoll').value;
-  profileData.aboutText = document.getElementById('c-about-text').value;
-  profileData.aboutPage = document.getElementById('c-about-page').value;
-  profileData.games = document.getElementById('c-games').value;
-  profileData.media = document.getElementById('c-media').value;
-  profileData.musicInterests = document.getElementById('c-music-interests').value;
-  profileData.linksText = document.getElementById('c-links-text').value;
-  profileData.favLeftPagedoll = document.getElementById('c-fav-left-pagedoll').value;
-  profileData.favRightPagedoll = document.getElementById('c-fav-right-pagedoll').value;
-  profileData.favSongs = document.getElementById('c-fav-songs').value;
-  profileData.favMovies = document.getElementById('c-fav-movies').value;
-  profileData.favAnimals = document.getElementById('c-fav-animals').value;
-  profileData.favFoods = document.getElementById('c-fav-foods').value;
-  profileData.favColors = document.getElementById('c-fav-colors').value;
-  profileData.favFlowers = document.getElementById('c-fav-flowers').value;
-
-  // Icon links
-  profileData.iconLinks = [];
-  document.querySelectorAll('.icon-link-row').forEach(row => {
-    profileData.iconLinks.push({
-      icon: row.querySelector('.il-icon').value,
-      title: row.querySelector('.il-title').value,
-      url: row.querySelector('.il-url').value
-    });
-  });
-
-  // Notices
-  profileData.notices = [];
-  document.querySelectorAll('.notice-input').forEach(inp => {
-    profileData.notices.push(inp.value);
-  });
-
-  // Art status
-  profileData.artStatus = [];
-  document.querySelectorAll('.art-status-row').forEach(row => {
-    profileData.artStatus.push({
-      label: row.querySelector('.as-label').value,
-      value: row.querySelector('.as-value').value
-    });
-  });
-
-  // Carousel
-  profileData.carouselSlides = [];
-  document.querySelectorAll('.carousel-slide-row').forEach(row => {
-    profileData.carouselSlides.push({
-      img: row.querySelector('.cs-img').value,
-      label: row.querySelector('.cs-label').value,
-      link: row.querySelector('.cs-link').value
-    });
-  });
-
-  // Ribbons
-  profileData.ribbons = [];
-  document.querySelectorAll('.ribbon-row').forEach(row => {
-    profileData.ribbons.push({
-      img: row.querySelector('.rib-img').value,
-      name: row.querySelector('.rib-name').value,
-      link: row.querySelector('.rib-link').value,
-      desc: row.querySelector('.rib-desc').value
-    });
-  });
-
-  // Fav chars
-  profileData.favChars = [];
-  document.querySelectorAll('.fav-char-row').forEach(row => {
-    profileData.favChars.push({
-      name: row.querySelector('.fc-name').value,
-      img: row.querySelector('.fc-img').value,
-      link: row.querySelector('.fc-link').value
-    });
-  });
-
-  // Featured chars
-  profileData.featuredChars = [];
-  document.querySelectorAll('.featured-char-row').forEach(row => {
-    profileData.featuredChars.push({
-      name: row.querySelector('.ftc-name').value,
-      img: row.querySelector('.ftc-img').value,
-      link: row.querySelector('.ftc-link').value
-    });
-  });
-}
-
-function saveAndPreview() {
-  collectData();
-  saveData();
-  applyToViewer();
-  renderPreviewFrame();
-  showToast();
-}
-
-function showToast() {
-  const t = document.getElementById('save-toast');
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2000);
-}
-
-// ===== APPLY DATA TO VIEWER =====
-function applyToViewer() {
-  // CSS vars
-  const hex = profileData.accentColor;
-  const rgb = hexToRgb(hex);
-  document.documentElement.style.setProperty('--color-accent', hex);
-  document.documentElement.style.setProperty('--color-accent-rgb', `${rgb.r}, ${rgb.g}, ${rgb.b}`);
-  document.documentElement.style.setProperty('--color-bg', profileData.bgColor);
-  document.documentElement.style.setProperty('--color-text', profileData.textColor);
-  document.documentElement.style.setProperty('--color-scrollbox', profileData.cardColor);
-  document.documentElement.style.setProperty('--color-img-border', profileData.imgBorderColor);
-  document.documentElement.style.setProperty('--font-body', profileData.fontBody);
-  document.documentElement.style.setProperty('--font-display', profileData.fontDisplay);
-
-  // Nav title
-  document.getElementById('nav-site-title').textContent = profileData.siteTitle;
-  document.getElementById('page-title').textContent = profileData.siteTitle;
-
-  // Banner
-  const banner = document.getElementById('profile-banner');
-  if (profileData.bannerImg) {
-    banner.style.backgroundImage = `url('${profileData.bannerImg}')`;
-    banner.classList.remove('no-image');
-  } else {
-    banner.style.backgroundImage = '';
-    banner.classList.add('no-image');
+    document.getElementById('tzName').textContent = tzLabel || tzString;
+    document.getElementById('tzClock').textContent =
+      new Date().toLocaleTimeString('en-US',{timeZone:tzString,hour12:true,hour:'2-digit',minute:'2-digit'});
+  } catch(e) {
+    document.getElementById('tzClock').textContent = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
   }
-  banner.style.backgroundColor = profileData.bgColor;
+}
+updateClock();
+setInterval(updateClock, 10000);
 
-  // Profile outer background
-  const outer = document.getElementById('profile-outer-bg');
-  const bgImg = profileData.bgImg ? ` url('${profileData.bgImg}')` : '';
-  outer.style.background = profileData.bgColor + bgImg;
+/* ════════════════════════════════════
+   SLIDESHOW
+════════════════════════════════════ */
+let cur = 0;
+const slides    = () => document.querySelectorAll('#slideshow .slide');
+const dotEls    = () => document.querySelectorAll('#slideDots .dot');
+const slidePh   = document.getElementById('slidePh');
 
-  // Username
-  document.getElementById('disp-username').textContent = profileData.username;
+function checkImages() {
+  const hasImgs = [...slides()].some(s => {
+    const bg = s.style.backgroundImage;
+    return bg && bg !== "url('')" && bg !== 'url("")';
+  });
+  if (slidePh) slidePh.style.display = hasImgs ? 'none' : 'flex';
+  return hasImgs;
+}
 
-  // Pagedoll
-  const pdImg = document.getElementById('disp-pagedoll-img');
-  const pdLink = document.getElementById('disp-pagedoll-link');
-  if (profileData.pagedollImg) {
-    pdImg.src = profileData.pagedollImg;
-    pdImg.style.display = '';
-  } else {
-    pdImg.style.display = 'none';
+function goSlide(n) {
+  const sl = slides(); const dt = dotEls();
+  if (!sl.length) return;
+  sl[cur] && sl[cur].classList.remove('active');
+  dt[cur] && dt[cur].classList.remove('active');
+  cur = n % sl.length;
+  sl[cur] && sl[cur].classList.add('active');
+  dt[cur] && dt[cur].classList.add('active');
+}
+
+checkImages();
+setInterval(() => { if (checkImages()) goSlide(cur + 1); }, 4000);
+
+/* ════════════════════════════════════
+   CHARACTER PANEL
+════════════════════════════════════ */
+function togglePanel(id, btn) {
+  const panel = document.getElementById(id);
+  const isOpen = panel.classList.contains('open');
+  document.querySelectorAll('.char-panel').forEach(p => p.classList.remove('open'));
+  document.querySelectorAll('.char-toggle').forEach(b => { b.classList.remove('open'); b.setAttribute('aria-expanded','false'); b.querySelector('span').textContent='View Info'; });
+  if (!isOpen) {
+    panel.classList.add('open');
+    btn.classList.add('open');
+    btn.setAttribute('aria-expanded','true');
+    btn.querySelector('span').textContent='Hide Info';
   }
-  pdLink.href = profileData.pagedollLink;
+}
+function closePanel(id) {
+  document.getElementById(id).classList.remove('open');
+  document.querySelectorAll('.char-toggle').forEach(b => { b.classList.remove('open'); b.querySelector('span').textContent='View Info'; });
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.char-card') && !e.target.closest('#createOverlay'))
+    document.querySelectorAll('.char-panel').forEach(p => p.classList.remove('open'));
+});
 
-  // Focal image
-  const focal = document.getElementById('disp-focal-image');
-  if (profileData.focalImg) {
-    focal.style.backgroundImage = `url('${profileData.focalImg}')`;
-    focal.classList.remove('placeholder');
-    focal.textContent = '';
-  } else {
-    focal.style.backgroundImage = '';
-    focal.classList.add('placeholder');
-    focal.textContent = '[ focal image ]';
-  }
+/* ════════════════════════════════════
+   FRONTER CARDS (live data store)
+════════════════════════════════════ */
+let fronterData = []; // { name, imgUrl, pageUrl }
 
-  // Name/pronouns
-  document.getElementById('disp-namepronouns').textContent = profileData.namePronouns;
-
-  // Icon links
-  const iconCont = document.getElementById('disp-icon-links');
-  iconCont.innerHTML = profileData.iconLinks.map(il =>
-    `<a href="${il.url}" title="${il.title}"><i class="${il.icon}"></i></a>`
-  ).join('');
-
-  // Music
-  const ytSrc = profileData.ytId
-    ? `https://www.youtube.com/embed/${profileData.ytId}?controls=0`
-    : 'about:blank';
-  document.getElementById('disp-yt-iframe').src = ytSrc;
-  document.getElementById('disp-lyrics').textContent = profileData.lyrics;
-
-  // Notices pagedoll
-  const npd = document.getElementById('disp-notices-pagedoll');
-  npd.innerHTML = profileData.noticesPagedoll
-    ? `<img src="${profileData.noticesPagedoll}" style="max-height:200px" alt="">`
-    : '';
-
-  // Notices list
-  const nl = document.getElementById('disp-notices-list');
-  nl.innerHTML = profileData.notices.map(n => `<li>${escHtml(n)}</li>`).join('');
-
-  // Art status
-  const asDiv = document.getElementById('disp-art-status');
-  asDiv.innerHTML = profileData.artStatus.map(s =>
-    `<div class="status-line">
-      <span class="status-label">${escHtml(s.label)}:</span>
-      <span class="status-value">${escHtml(s.value)}</span>
-    </div>`
-  ).join('');
-
-  // Carousel
-  renderCarousel();
-
-  // About pagedoll
-  const apd = document.getElementById('disp-about-pagedoll');
-  apd.innerHTML = profileData.aboutPagedoll
-    ? `<img src="${profileData.aboutPagedoll}" style="max-height:200px" alt="">`
-    : '';
-
-  // About text
-  document.getElementById('disp-about-text').textContent = profileData.aboutText;
-
-  // Interests
-  document.getElementById('disp-games').textContent = ' ' + profileData.games;
-  document.getElementById('disp-media').textContent = ' ' + profileData.media;
-  document.getElementById('disp-music-interests').textContent = ' ' + profileData.musicInterests;
-
-  // Links
-  const linksEl = document.getElementById('disp-links-list');
-  if (profileData.linksText.trim()) {
-    const parts = profileData.linksText.split(',').map(s => s.trim()).filter(Boolean);
-    linksEl.innerHTML = ' ' + parts.map(p => {
-      const [label, url] = p.split('|').map(x => x.trim());
-      return url ? `<a href="${url}" class="text-reset" style="color:var(--color-text)">${escHtml(label)}</a>` : escHtml(label);
-    }).join(', ');
-  } else {
-    linksEl.textContent = '';
-  }
-
-  // Ribbons
-  const ribbonsEl = document.getElementById('disp-ribbons');
-  ribbonsEl.innerHTML = profileData.ribbons.map(r =>
-    `<a href="${r.link||'#'}" title="${r.name}" class="ribbon-item">
-      <img src="${r.img}" alt="${r.name}" title="${r.desc}" style="height:62px">
-    </a>`
-  ).join('');
-
-  // Fav pagedolls
-  document.getElementById('disp-fav-left-pagedoll').innerHTML = profileData.favLeftPagedoll
-    ? `<img src="${profileData.favLeftPagedoll}" style="max-height:200px" alt="">` : '';
-  document.getElementById('disp-fav-right-pagedoll').innerHTML = profileData.favRightPagedoll
-    ? `<img src="${profileData.favRightPagedoll}" style="max-height:200px" alt="">` : '';
-
-  // Favorites
-  document.getElementById('disp-fav-songs').textContent = ' ' + profileData.favSongs;
-  document.getElementById('disp-fav-movies').textContent = ' ' + profileData.favMovies;
-  document.getElementById('disp-fav-animals').textContent = ' ' + profileData.favAnimals;
-  document.getElementById('disp-fav-foods').textContent = ' ' + profileData.favFoods;
-  document.getElementById('disp-fav-colors').textContent = ' ' + profileData.favColors;
-  document.getElementById('disp-fav-flowers').textContent = ' ' + profileData.favFlowers;
-
-  // Fav characters
-  const fc = document.getElementById('disp-fav-chars');
-  fc.innerHTML = profileData.favChars.map(c =>
-    `<div class="fav-char-card">
-      <div class="fav-char-img" style="background-image:url('${c.img}')">
-        <a href="${c.link||'#'}" style="display:block;width:100%;height:100%"></a>
+function renderFronterGrid() {
+  const grid = document.getElementById('fronterGrid');
+  const addBtn = `<div class="fronter-card fronter-add" onclick="openCreate('tabFronters')" title="Add fronter in Create Mode"><i class="fa-solid fa-plus"></i><span>Add</span></div>`;
+  grid.innerHTML = fronterData.map((f,i) => `
+    <a class="fronter-card" href="${f.pageUrl||'#'}" ${f.pageUrl ? 'target="_blank"' : ''} title="${f.name}">
+      <div class="fronter-thumb" style="background-image:url('${f.imgUrl||''}')">
+        ${f.imgUrl ? '' : '<i class="fa-solid fa-user"></i>'}
       </div>
-      <div class="fav-char-name">${escHtml(c.name)}</div>
-    </div>`
-  ).join('');
-
-  // Featured characters
-  const ftc = document.getElementById('disp-featured-chars');
-  ftc.innerHTML = profileData.featuredChars.map(c =>
-    `<div class="featured-char" title="${c.name}" onclick="if(event.target.tagName!=='A')window.location='${c.link||'#'}'">
-      <div class="featured-char-img" style="background-image:url('${c.img}')"></div>
-      <div class="featured-char-name">${escHtml(c.name)}</div>
-    </div>`
-  ).join('');
-
-  // About page
-  document.getElementById('disp-about-page').textContent = profileData.aboutPage || 'Your about page content goes here.';
+      <div class="fronter-name">${f.name}</div>
+    </a>`).join('') + addBtn;
 }
 
-// Carousel logic
-let carouselInterval = null;
-function renderCarousel() {
-  const wrap = document.getElementById('disp-carousel');
-  const slides = profileData.carouselSlides;
-  if (!slides.length) { wrap.innerHTML = ''; return; }
-  wrap.innerHTML = slides.map((s, i) =>
-    `<div class="carousel-slide${i===0?' active':''}" style="background-color:${profileData.imgBorderColor}; background-image:url('${s.img}')">
-      <div class="slide-label">${escHtml(s.label)}</div>
-      <div class="slide-inner" style="background-image:url('${s.img}')">
-        <a href="${s.link||'#'}" style="display:block;width:100%;height:100%"></a>
-      </div>
-    </div>`
-  ).join('');
-  if (carouselInterval) clearInterval(carouselInterval);
-  let idx = 0;
-  carouselInterval = setInterval(() => {
-    const sl = wrap.querySelectorAll('.carousel-slide');
-    sl.forEach(s => s.classList.remove('active'));
-    idx = (idx + 1) % sl.length;
-    sl[idx].classList.add('active');
-  }, 4000);
+/* ════════════════════════════════════
+   CUSTOM SECTIONS (live store)
+════════════════════════════════════ */
+let customSections = []; // { id, title, showHead, type, content }
+let sectionIdCounter = 0;
+
+function renderCustomSections() {
+  const mount = document.getElementById('customSectionsMount');
+  mount.innerHTML = customSections.map(sec => {
+    let bodyHTML = '';
+    if (sec.type === 'prose') {
+      bodyHTML = `<p class="prose">${sec.content.replace(/\n/g,'<br>')}</p>`;
+    } else if (sec.type === 'bullets') {
+      const items = sec.content.split('\n').filter(l=>l.trim());
+      bodyHTML = `<ul style="padding-left:18px;font-size:.82rem;line-height:1.85">${items.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+    } else if (sec.type === 'image') {
+      const parts = sec.content.split('\n');
+      const url   = parts[0]||'';
+      const cap   = parts[1]||'';
+      bodyHTML = url ? `<div class="custom-img-block"><img src="${url}" alt="${cap}" loading="lazy">${cap?`<div class="custom-img-caption">${cap}</div>`:''}</div>` : `<p class="prose" style="color:var(--muted)">Add an image URL in Create Mode.</p>`;
+    } else if (sec.type === 'links') {
+      const lines = sec.content.split('\n').filter(l=>l.trim());
+      const items = lines.map(l => { const [label,...rest]=l.split('|'); const url=rest.join('|').trim(); return `<li><a href="${url||'#'}" ${url?'target="_blank"':''}><i class="fa-solid fa-arrow-up-right-from-square fa-xs"></i> ${label.trim()}</a></li>`; }).join('');
+      bodyHTML = `<ul class="custom-link-list">${items}</ul>`;
+    }
+    return `<div class="divider"></div><div class="custom-section" data-sec-id="${sec.id}"><div class="sec-head ${sec.showHead?'':'sec-head head-hidden'}"><i class="fa-solid fa-bookmark"></i> ${sec.title||'Section'}</div><div class="sec-block-inner">${bodyHTML}</div></div>`;
+  }).join('');
 }
 
-// Preview frame render
-function renderPreviewFrame() {
-  const frame = document.getElementById('preview-frame');
-  const profileSection = document.getElementById('section-profile');
-  const bannerClone = document.getElementById('profile-banner').cloneNode(true);
-  const clone = profileSection.cloneNode(true);
-  clone.style.display = '';
-  frame.innerHTML = '';
-  frame.appendChild(bannerClone);
-  frame.appendChild(clone);
-}
+/* ════════════════════════════════════
+   CREATE MODE
+════════════════════════════════════ */
+let fronterEntryCount = 0;
+let customSecCount    = 0;
 
-// ===== POPULATE CREATOR FIELDS =====
-function populateCreatorFields() {
-  document.getElementById('c-site-title').value = profileData.siteTitle;
-  document.getElementById('c-username').value = profileData.username;
-  document.getElementById('c-namepronouns').value = profileData.namePronouns;
-  setColorField('c-accent-color', 'c-accent-hex', profileData.accentColor);
-  setColorField('c-bg-color', 'c-bg-hex', profileData.bgColor);
-  setColorField('c-text-color', 'c-text-hex', profileData.textColor);
-  setColorField('c-card-color', 'c-card-hex', profileData.cardColor);
-  setColorField('c-imgborder-color', 'c-imgborder-hex', profileData.imgBorderColor);
-  document.getElementById('c-font-body').value = profileData.fontBody;
-  document.getElementById('c-font-display').value = profileData.fontDisplay;
-  document.getElementById('c-banner-img').value = profileData.bannerImg;
-  document.getElementById('c-focal-img').value = profileData.focalImg;
-  document.getElementById('c-bg-img').value = profileData.bgImg;
-  document.getElementById('c-pagedoll-img').value = profileData.pagedollImg;
-  document.getElementById('c-pagedoll-link').value = profileData.pagedollLink;
-  document.getElementById('c-yt-id').value = profileData.ytId;
-  document.getElementById('c-lyrics').value = profileData.lyrics;
-  document.getElementById('c-notices-pagedoll').value = profileData.noticesPagedoll;
-  document.getElementById('c-about-pagedoll').value = profileData.aboutPagedoll;
-  document.getElementById('c-about-text').value = profileData.aboutText;
-  document.getElementById('c-about-page').value = profileData.aboutPage;
-  document.getElementById('c-games').value = profileData.games;
-  document.getElementById('c-media').value = profileData.media;
-  document.getElementById('c-music-interests').value = profileData.musicInterests;
-  document.getElementById('c-links-text').value = profileData.linksText;
-  document.getElementById('c-fav-left-pagedoll').value = profileData.favLeftPagedoll;
-  document.getElementById('c-fav-right-pagedoll').value = profileData.favRightPagedoll;
-  document.getElementById('c-fav-songs').value = profileData.favSongs;
-  document.getElementById('c-fav-movies').value = profileData.favMovies;
-  document.getElementById('c-fav-animals').value = profileData.favAnimals;
-  document.getElementById('c-fav-foods').value = profileData.favFoods;
-  document.getElementById('c-fav-colors').value = profileData.favColors;
-  document.getElementById('c-fav-flowers').value = profileData.favFlowers;
+function openCreate(tabId) {
+  // pre-fill text fields
+  document.getElementById('cm_name').value    = document.getElementById('displayName').innerText;
+  document.getElementById('cm_tagline').value = document.getElementById('displayTagline').innerText;
+  document.getElementById('cm_about1').value  = document.getElementById('aboutText').innerText.trim();
+  document.getElementById('cm_about2').value  = document.getElementById('aboutText2').innerText.trim();
+  document.getElementById('cm_tz').value      = tzString;
+  document.getElementById('cm_tzLabel').value = tzLabel;
+  document.getElementById('cm_ticker').value  = document.getElementById('musicTicker').innerText.replace(/♪.*$/,'').trim() || document.getElementById('musicTicker').innerText;
+  document.getElementById('cm_disclaimer').value = [...document.querySelectorAll('#disclaimerList li')].map(l=>l.innerText).join('\n');
 
-  // Icon links
-  const ilEd = document.getElementById('icon-links-editor');
-  ilEd.innerHTML = '';
-  profileData.iconLinks.forEach((il, i) => renderIconLinkRow(il));
+  // render fronter entries
+  renderFronterEntries();
+  // render custom section entries
+  renderCustomSecEntries();
 
-  // Notices
-  const nEd = document.getElementById('notices-editor');
-  nEd.innerHTML = '';
-  profileData.notices.forEach(n => renderNoticeRow(n));
-
-  // Art status
-  const asEd = document.getElementById('art-status-editor');
-  asEd.innerHTML = '';
-  profileData.artStatus.forEach(s => renderArtStatusRow(s));
-
-  // Carousel
-  const csEd = document.getElementById('carousel-editor');
-  csEd.innerHTML = '';
-  profileData.carouselSlides.forEach(s => renderCarouselRow(s));
-
-  // Ribbons
-  const ribEd = document.getElementById('ribbons-editor');
-  ribEd.innerHTML = '';
-  profileData.ribbons.forEach(r => renderRibbonRow(r));
-
-  // Fav chars
-  const fcEd = document.getElementById('fav-chars-editor');
-  fcEd.innerHTML = '';
-  profileData.favChars.forEach(c => renderFavCharRow(c));
-
-  // Featured chars
-  const ftcEd = document.getElementById('featured-chars-editor');
-  ftcEd.innerHTML = '';
-  profileData.featuredChars.forEach(c => renderFeaturedCharRow(c));
-}
-
-// ===== ROW RENDERERS =====
-function renderIconLinkRow(il) {
-  const div = document.createElement('div');
-  div.className = 'list-item-row icon-link-row';
-  div.innerHTML = `
-    <input type="text" class="field-input il-icon" value="${il.icon}" placeholder="fa-solid fa-star" style="flex:1.5">
-    <input type="text" class="field-input il-title" value="${il.title}" placeholder="Title">
-    <input type="text" class="field-input il-url" value="${il.url}" placeholder="URL">
-    <button class="list-remove-btn" onclick="this.parentElement.remove()">✕</button>
-  `;
-  document.getElementById('icon-links-editor').appendChild(div);
-}
-function addIconLink() { renderIconLinkRow({ icon: 'fa-solid fa-star', title: 'Link', url: '#' }); }
-
-function renderNoticeRow(n) {
-  const div = document.createElement('div');
-  div.className = 'list-item-row';
-  div.innerHTML = `
-    <input type="text" class="field-input notice-input" value="${escAttr(n)}" placeholder="Notice text...">
-    <button class="list-remove-btn" onclick="this.parentElement.remove()">✕</button>
-  `;
-  document.getElementById('notices-editor').appendChild(div);
-}
-function addNotice() { renderNoticeRow(''); }
-
-function renderArtStatusRow(s) {
-  const div = document.createElement('div');
-  div.className = 'list-item-row art-status-row field-group';
-  div.innerHTML = `
-    <input type="text" class="field-input as-label" value="${escAttr(s.label)}" placeholder="Label" style="flex:1.2">
-    <input type="text" class="field-input as-value" value="${escAttr(s.value)}" placeholder="open/closed">
-    <button class="list-remove-btn" onclick="this.parentElement.remove()">✕</button>
-  `;
-  document.getElementById('art-status-editor').appendChild(div);
-}
-
-function renderCarouselRow(s) {
-  const div = document.createElement('div');
-  div.className = 'list-item-row carousel-slide-row';
-  div.style.flexDirection = 'column';
-  div.style.gap = '4px';
-  div.style.alignItems = 'stretch';
-  div.style.marginBottom = '10px';
-  div.innerHTML = `
-    <div class="list-item-row">
-      <input type="text" class="field-input cs-img" value="${escAttr(s.img)}" placeholder="Image URL" style="flex:1">
-      <button class="list-remove-btn" onclick="this.closest('.carousel-slide-row').remove()">✕</button>
-    </div>
-    <div class="list-item-row">
-      <input type="text" class="field-input cs-label" value="${escAttr(s.label)}" placeholder="Label" style="flex:1">
-      <input type="text" class="field-input cs-link" value="${escAttr(s.link)}" placeholder="Link URL" style="flex:1">
-    </div>
-  `;
-  document.getElementById('carousel-editor').appendChild(div);
-}
-function addCarouselSlide() { renderCarouselRow({ img: '', label: 'slide', link: '#' }); }
-
-function renderRibbonRow(r) {
-  const div = document.createElement('div');
-  div.className = 'ribbon-row';
-  div.style.marginBottom = '10px';
-  div.innerHTML = `
-    <div class="list-item-row">
-      <input type="text" class="field-input rib-img" value="${escAttr(r.img||'')}" placeholder="Ribbon image URL" style="flex:1">
-      <button class="list-remove-btn" onclick="this.closest('.ribbon-row').remove()">✕</button>
-    </div>
-    <div class="list-item-row" style="margin-top:4px">
-      <input type="text" class="field-input rib-name" value="${escAttr(r.name||'')}" placeholder="Ribbon name">
-      <input type="text" class="field-input rib-link" value="${escAttr(r.link||'')}" placeholder="Link URL">
-    </div>
-    <div class="list-item-row" style="margin-top:4px">
-      <input type="text" class="field-input rib-desc" value="${escAttr(r.desc||'')}" placeholder="Description / tooltip">
-    </div>
-  `;
-  document.getElementById('ribbons-editor').appendChild(div);
-}
-function addRibbon() { renderRibbonRow({ img:'', name:'', link:'#', desc:'' }); }
-
-function renderFavCharRow(c) {
-  const div = document.createElement('div');
-  div.className = 'fav-char-row';
-  div.style.marginBottom = '10px';
-  div.innerHTML = `
-    <div class="list-item-row">
-      <input type="text" class="field-input fc-name" value="${escAttr(c.name||'')}" placeholder="Character name">
-      <button class="list-remove-btn" onclick="this.closest('.fav-char-row').remove()">✕</button>
-    </div>
-    <div class="list-item-row" style="margin-top:4px">
-      <input type="text" class="field-input fc-img" value="${escAttr(c.img||'')}" placeholder="Image URL">
-      <input type="text" class="field-input fc-link" value="${escAttr(c.link||'')}" placeholder="Link">
-    </div>
-  `;
-  document.getElementById('fav-chars-editor').appendChild(div);
-}
-function addFavChar() { renderFavCharRow({ name:'chara_name', img:'', link:'#' }); }
-
-function renderFeaturedCharRow(c) {
-  const div = document.createElement('div');
-  div.className = 'featured-char-row';
-  div.style.marginBottom = '10px';
-  div.innerHTML = `
-    <div class="list-item-row">
-      <input type="text" class="field-input ftc-name" value="${escAttr(c.name||'')}" placeholder="Character name">
-      <button class="list-remove-btn" onclick="this.closest('.featured-char-row').remove()">✕</button>
-    </div>
-    <div class="list-item-row" style="margin-top:4px">
-      <input type="text" class="field-input ftc-img" value="${escAttr(c.img||'')}" placeholder="Image URL">
-      <input type="text" class="field-input ftc-link" value="${escAttr(c.link||'')}" placeholder="Link">
-    </div>
-  `;
-  document.getElementById('featured-chars-editor').appendChild(div);
-}
-function addFeaturedChar() { renderFeaturedCharRow({ name:'CHARA_NAME', img:'', link:'#' }); }
-
-// ===== SIDEBAR TOGGLE =====
-function toggleSection(titleEl) {
-  titleEl.classList.toggle('collapsed');
-  const body = titleEl.nextElementSibling;
-  body.classList.toggle('hidden');
-}
-
-// ===== COLOR HELPERS =====
-function syncColorHex(picker, hexId) {
-  document.getElementById(hexId).value = picker.value;
-}
-function syncColorPicker(hexInput, pickerId) {
-  const val = hexInput.value;
-  if (/^#[0-9a-fA-F]{6}$/.test(val)) {
-    document.getElementById(pickerId).value = val;
+  document.getElementById('createOverlay').classList.add('active');
+  if (tabId) {
+    const btn = document.querySelector(`[data-tab="${tabId}"]`);
+    if (btn) switchTab(btn);
   }
 }
-function setColorField(pickerId, hexId, value) {
-  document.getElementById(pickerId).value = value;
-  document.getElementById(hexId).value = value;
-}
-function hexToRgb(hex) {
-  const r = parseInt(hex.slice(1,3),16)||217;
-  const g = parseInt(hex.slice(3,5),16)||74;
-  const b = parseInt(hex.slice(5,7),16)||121;
-  return {r,g,b};
+function closeCreate() { document.getElementById('createOverlay').classList.remove('active'); }
+
+function switchTab(btn) {
+  document.querySelectorAll('.cm-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.cm-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(btn.dataset.tab).classList.add('active');
+  btn.classList.add('active');
 }
 
-function escHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function escAttr(str) {
-  return String(str||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+/* ── Fronter entries in modal ── */
+function renderFronterEntries() {
+  const cont = document.getElementById('fronterEntries');
+  cont.innerHTML = fronterData.map((f,i)=>`
+    <div class="fronter-entry" id="fe_${i}">
+      <div class="fronter-entry-fields">
+        <div class="cm-row"><label>Name</label><input type="text" id="fe_name_${i}" value="${f.name||''}"></div>
+        <div class="cm-row"><label>Portrait Image URL</label><input type="text" id="fe_img_${i}" value="${f.imgUrl||''}"></div>
+        <div class="cm-row"><label>Profile Page URL (can be a placeholder)</label><input type="text" id="fe_url_${i}" value="${f.pageUrl||''}"></div>
+      </div>
+      <button class="fe-remove" onclick="removeFronter(${i})"><i class="fa-solid fa-xmark"></i></button>
+    </div>`).join('');
 }
 
-// ===== INIT =====
-loadData();
-applyToViewer();
+function addFronterEntry() {
+  fronterData.push({name:'New Fronter',imgUrl:'',pageUrl:''});
+  renderFronterEntries();
+}
+function removeFronter(i) {
+  fronterData.splice(i,1);
+  renderFronterEntries();
+}
+function saveFronterEntries() {
+  fronterData = fronterData.map((_,i)=>({
+    name:    (document.getElementById(`fe_name_${i}`)?.value||'').trim(),
+    imgUrl:  (document.getElementById(`fe_img_${i}`)?.value||'').trim(),
+    pageUrl: (document.getElementById(`fe_url_${i}`)?.value||'').trim(),
+  })).filter(f=>f.name);
+}
+
+/* ── Custom section entries in modal ── */
+function renderCustomSecEntries() {
+  const cont = document.getElementById('customSecEntries');
+  cont.innerHTML = customSections.map((sec,i)=>`
+    <div class="custom-sec-entry" id="cse_${i}">
+      <div class="cse-head">
+        <div class="cse-title">Section ${i+1}</div>
+        <button class="cse-remove" onclick="removeCustomSec(${i})"><i class="fa-solid fa-xmark"></i> Remove</button>
+      </div>
+      <div class="cm-row"><label>Section Title</label><input type="text" id="cse_title_${i}" value="${sec.title||''}"></div>
+      <div class="cm-row">
+        <label>Show header bar?</label>
+        <label class="cm-switch"><input type="checkbox" id="cse_head_${i}" ${sec.showHead?'checked':''}><span class="sw-track"></span></label>
+      </div>
+      <div class="cm-row">
+        <label>Content Type</label>
+        <select id="cse_type_${i}" onchange="updateSecTypeHint(${i})">
+          <option value="prose" ${sec.type==='prose'?'selected':''}>Prose / free text</option>
+          <option value="bullets" ${sec.type==='bullets'?'selected':''}>Bullet list (one item per line)</option>
+          <option value="image" ${sec.type==='image'?'selected':''}>Image + caption (URL on line 1, caption on line 2)</option>
+          <option value="links" ${sec.type==='links'?'selected':''}>Link list (Label | URL, one per line)</option>
+        </select>
+      </div>
+      <div class="cm-row"><label id="cse_hint_${i}">Content</label><textarea id="cse_content_${i}" rows="4">${sec.content||''}</textarea></div>
+    </div>`).join('');
+}
+
+function updateSecTypeHint(i) {
+  const type  = document.getElementById(`cse_type_${i}`).value;
+  const hints = { prose:'Write your text here.', bullets:'One bullet item per line.', image:'Line 1: image URL\nLine 2: caption text', links:'Label | https://url.com\nOne link per line' };
+  document.getElementById(`cse_hint_${i}`).textContent = hints[type] || 'Content';
+}
+
+function addCustomSection() {
+  customSections.push({id: ++sectionIdCounter, title:'New Section', showHead:true, type:'prose', content:''});
+  renderCustomSecEntries();
+}
+function removeCustomSec(i) {
+  customSections.splice(i,1);
+  renderCustomSecEntries();
+}
+function saveCustomSections() {
+  customSections = customSections.map((_,i)=>({
+    id:       customSections[i].id,
+    title:    (document.getElementById(`cse_title_${i}`)?.value||'').trim() || 'Section',
+    showHead: document.getElementById(`cse_head_${i}`)?.checked ?? true,
+    type:     document.getElementById(`cse_type_${i}`)?.value || 'prose',
+    content:  (document.getElementById(`cse_content_${i}`)?.value||'').trim(),
+  }));
+}
+
+/* ── APPLY ── */
+function applyCreate() {
+  // text
+  const rawName = document.getElementById('cm_name').value.trim();
+  if (rawName) document.getElementById('displayName').innerHTML = rawName.replace(/\*([^*]+)\*/g,'<em>$1</em>');
+  const tl = document.getElementById('cm_tagline').value.trim();
+  if (tl) document.getElementById('displayTagline').innerText = tl;
+  const a1 = document.getElementById('cm_about1').value.trim();
+  if (a1) document.getElementById('aboutText').innerText = a1;
+  const a2 = document.getElementById('cm_about2').value.trim();
+  if (a2) document.getElementById('aboutText2').innerText = a2;
+
+  const tz = document.getElementById('cm_tz').value.trim();
+  if (tz) tzString = tz;
+  const tzl = document.getElementById('cm_tzLabel').value.trim();
+  if (tzl) tzLabel = tzl;
+  updateClock();
+
+  const ticker = document.getElementById('cm_ticker').value.trim();
+  if (ticker) { const t=ticker+' &nbsp;&nbsp;&nbsp;&nbsp; '+ticker+' &nbsp;&nbsp;&nbsp;&nbsp; '+ticker; document.getElementById('musicTicker').innerHTML=t; }
+
+  const disc = document.getElementById('cm_disclaimer').value.trim();
+  if (disc) document.getElementById('disclaimerList').innerHTML = disc.split('\n').filter(l=>l.trim()).map(l=>`<li>${l}</li>`).join('');
+
+  // member cards
+  [1,2,3].forEach(n=>{
+    const name    = document.getElementById(`cm_c${n}name`)?.value.trim();
+    const species = document.getElementById(`cm_c${n}species`)?.value.trim();
+    const bio     = document.getElementById(`cm_c${n}bio`)?.value.trim();
+    const traits  = document.getElementById(`cm_c${n}traits`)?.value.trim();
+    const link    = document.getElementById(`cm_c${n}link`)?.value.trim();
+    if (name)    { document.getElementById(`cname${n}`).innerText=name; document.getElementById(`cpname${n}`).innerText=name; }
+    if (species) document.getElementById(`cpspecies${n}`).innerText=species;
+    if (bio)     document.getElementById(`cpbio${n}`).innerText=bio;
+    if (traits)  document.getElementById(`cptraits${n}`).innerHTML=traits.split(',').map(t=>`<span class="cp-trait">${t.trim()}</span>`).join('');
+    if (link)    document.getElementById(`cplink${n}`).href=link;
+  });
+
+  // colors
+  const cmap = {cc_bg:'--bg',cc_card:'--card',cc_accent:'--accent',cc_accent3:'--accent3',cc_warm:'--warm',cc_text:'--text'};
+  Object.entries(cmap).forEach(([id,v])=>document.documentElement.style.setProperty(v,document.getElementById(id).value));
+  const bg2 = lightenHex(document.getElementById('cc_bg').value,-8);
+  document.documentElement.style.setProperty('--bg2', bg2);
+  document.documentElement.style.setProperty('--bg3', lightenHex(document.getElementById('cc_bg').value,-16));
+
+  // images
+  const banner = document.getElementById('cm_banner').value.trim();
+  if (banner) document.getElementById('bannerImg').style.backgroundImage=`url('${banner}')`;
+  const avatar = document.getElementById('cm_avatar').value.trim();
+  if (avatar) document.getElementById('avatarEl').innerHTML=`<img src="${avatar}" alt="avatar">`;
+
+  [1,2,3].forEach(n=>{
+    const s = document.getElementById(`cm_s${n}`)?.value.trim();
+    const c = document.getElementById(`cm_s${n}cap`)?.value.trim();
+    const sl = document.querySelectorAll('#slideshow .slide')[n-1];
+    if (s && sl) sl.style.backgroundImage=`url('${s}')`;
+    if (c && sl) sl.querySelector('.slide-caption').innerText=c;
+    const ci = document.getElementById(`cm_ci${n}`)?.value.trim();
+    if (ci) { document.getElementById(`ct${n}`).style.backgroundImage=`url('${ci}')`; document.getElementById(`cpimg${n}`).style.backgroundImage=`url('${ci}')`; }
+  });
+  checkImages();
+
+  // fronters
+  saveFronterEntries();
+  renderFronterGrid();
+
+  // custom sections
+  saveCustomSections();
+  renderCustomSections();
+
+  // visibility
+  const secMap = { tog_music:'musicBarSection', tog_about:'aboutSection', tog_fronters:'frontersSection', tog_disclaimer:'disclaimerSection', tog_card1:'card1', tog_card2:'card2', tog_card3:'card3' };
+  Object.entries(secMap).forEach(([t,s])=>{ const el=document.getElementById(s); if(el) el.classList.toggle('hidden-section',!document.getElementById(t).checked); });
+  // head toggles
+  const headMap = { tog_aboutHead:'aboutHead', tog_frontersHead:'frontersHead', tog_disclaimerHead:'disclaimerHead' };
+  Object.entries(headMap).forEach(([t,h])=>{ const el=document.getElementById(h); if(el) el.classList.toggle('head-hidden',!document.getElementById(t).checked); });
+  // timezone widget
+  document.getElementById('tzWidget').classList.toggle('hidden-section',!document.getElementById('tog_tz').checked);
+
+  closeCreate();
+}
+
+/* helper: lighten/darken hex */
+function lightenHex(hex, amt) {
+  const n = parseInt(hex.replace('#',''),16);
+  let r=Math.min(255,Math.max(0,((n>>16)&255)+amt));
+  let g=Math.min(255,Math.max(0,((n>>8)&255)+amt));
+  let b=Math.min(255,Math.max(0,(n&255)+amt));
+  return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+
+// close overlay on backdrop
+document.getElementById('createOverlay').addEventListener('click', e=>{ if(e.target===document.getElementById('createOverlay')) closeCreate(); });
+
+// init grid
+renderFronterGrid();
 </script>
 </body>
 </html>
